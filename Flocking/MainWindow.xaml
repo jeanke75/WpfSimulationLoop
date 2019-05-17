@@ -5,5 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:other="clr-namespace:DrawingBase;assembly=DrawingBase"
         mc:Ignorable="d"
-        Title="Simulation">
+        Title="Flocking simulation">
 </other:DrawingWindowBase>

@@ -21,22 +21,18 @@ namespace Flocking
 
         public override void Initialize()
         {
-            boids.Add(new Boid(new Vector(GetWidth() / 2d, GetHeight() / 2d), new Vector(1, 0)));
-            /*for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 50; i++)
             {
                 var position = new Vector(random.Next(0, GetWidth()), random.Next(0, GetHeight()));
-                var angle = random.NextDouble() * Math.PI * 2;
-                var direction = new Vector(Math.Cos(angle), Math.Sin(angle));
-                boids.Add(new Boid(position, direction));
-            }*/
+                boids.Add(new Boid(position));
+            }
         }
 
         public override void Update(float dt)
         {
-            //List<Boid> updatedBoids = new List<Boid>();
+            List<Boid> updatedBoids = new List<Boid>();
             foreach (Boid boid in boids)
             {
-                boid.Update(dt);
                 if (boid.position.X < 0)
                     boid.position.X = GetWidth();
                 else if (boid.position.X > GetWidth())
@@ -45,8 +41,12 @@ namespace Flocking
                     boid.position.Y = GetHeight();
                 else if (boid.position.Y > GetHeight())
                     boid.position.Y = 0;
+                Boid copy = boid.Flock(boids);
+                copy.Update(dt);
+                
+                updatedBoids.Add(copy);
             }
-            //boids = updatedBoids;
+            boids = updatedBoids;
         }
 
         public override void Draw(DrawingContext dc)
@@ -62,21 +62,6 @@ namespace Flocking
         public override void Cleanup()
         {
             boids.Clear();
-        }
-
-        private void Steering()
-        {
-
-        }
-
-        private void Alignment()
-        {
-
-        }
-
-        private void Cohesion()
-        {
-
         }
     }
 }
