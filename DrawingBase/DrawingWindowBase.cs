@@ -69,55 +69,55 @@ namespace DrawingBase
 
         private void GameTick(object sender, EventArgs e)
         {
-            DateTime now = DateTime.Now;
-            TimeSpan span = now - prev;
-            float dt = span.Milliseconds / 1000f;
-            prev = now;
+                DateTime now = DateTime.Now;
+                TimeSpan span = now - prev;
+                float dt = span.Milliseconds / 1000f;
+                prev = now;
 
-            // update
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            Update(dt);
-            sw.Stop();
-            updateMs += sw.Elapsed;
+                // update
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Update(dt);
+                sw.Stop();
+                updateMs += sw.Elapsed;
 
-            // draw
-            sw.Restart();
-            CvsDraw.Children.Clear();
-            DrawingVisual dv = new DrawingVisual();
-            using (DrawingContext dc = dv.RenderOpen())
-            {
-                Draw(dc);
-
-                if (ticks == fps)
+                // draw
+                sw.Restart();
+                CvsDraw.Children.Clear();
+                DrawingVisual dv = new DrawingVisual();
+                using (DrawingContext dc = dv.RenderOpen())
                 {
-                    avgUpdateMs = new TimeSpan(updateMs.Ticks / fps);
-                    avgDrawMs = new TimeSpan(drawMs.Ticks / fps);
+                    Draw(dc);
+
+                    if (ticks == fps)
+                    {
+                        avgUpdateMs = new TimeSpan(updateMs.Ticks / fps);
+                        avgDrawMs = new TimeSpan(drawMs.Ticks / fps);
+                    }
+
+                    if (DisplayInfo)
+                        ShowInfo(dc);
                 }
+                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)CvsDraw.ActualWidth, (int)CvsDraw.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                renderTargetBitmap.Render(dv);
+                Image img = new Image
+                {
+                    Source = renderTargetBitmap
+                };
+                CvsDraw.Children.Add(img);
+                sw.Stop();
+                drawMs += sw.Elapsed;
 
-                if (DisplayInfo)
-                    ShowInfo(dc);
-            }
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)CvsDraw.ActualWidth, (int)CvsDraw.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            renderTargetBitmap.Render(dv);
-            Image img = new Image
-            {
-                Source = renderTargetBitmap
-            };
-            CvsDraw.Children.Add(img);
-            sw.Stop();
-            drawMs += sw.Elapsed;
-
-            if (ticks < fps)
-            {
-                ticks++;
-            }
-            else
-            {
-                ticks = 0;
-                updateMs = new TimeSpan();
-                drawMs = sw.Elapsed;
-            }
+                if (ticks < fps)
+                {
+                    ticks++;
+                }
+                else
+                {
+                    ticks = 0;
+                    updateMs = new TimeSpan();
+                    drawMs = sw.Elapsed;
+                }
         }
 
         public abstract void Initialize();
@@ -150,6 +150,11 @@ namespace DrawingBase
         public int GetHeight()
         {
             return (int)CvsDraw.ActualHeight;
+        }
+
+        public void SetBackgroundColor(Color color)
+        {
+            CvsDraw.Background = new SolidColorBrush(color);
         }
 
         private void ShowInfo(DrawingContext dc)
