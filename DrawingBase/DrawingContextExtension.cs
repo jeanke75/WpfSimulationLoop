@@ -30,6 +30,7 @@ namespace DrawingBase
                 var bottomRight = new Point(size / 2d, height * 1 / 3d);
 
                 drawingContext.DrawTriangle(brush, pen, top, bottomLeft, bottomRight);
+                drawingContext.DrawRectangle(Brushes.Red, null, new Rect(top.X - 2, top.Y - 2, 4, 4));
             }
             else
             {
