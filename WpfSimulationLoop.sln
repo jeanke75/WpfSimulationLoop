@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UlamWarbuton", "UlamWarbuto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VonNeumannNeighbourhood", "VonNeumannNeighbourhood\VonNeumannNeighbourhood.csproj", "{C32B6AF0-924A-443D-BF3D-77A0F7CDC15A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlappyBird", "FlappyBird\FlappyBird.csproj", "{6DF7DB0F-A605-434A-A12D-C850661731D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{C32B6AF0-924A-443D-BF3D-77A0F7CDC15A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C32B6AF0-924A-443D-BF3D-77A0F7CDC15A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C32B6AF0-924A-443D-BF3D-77A0F7CDC15A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DF7DB0F-A605-434A-A12D-C850661731D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DF7DB0F-A605-434A-A12D-C850661731D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DF7DB0F-A605-434A-A12D-C850661731D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DF7DB0F-A605-434A-A12D-C850661731D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
