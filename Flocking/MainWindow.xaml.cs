@@ -1,8 +1,8 @@
-﻿using System;
+﻿using DrawingBase;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
-using DrawingBase;
 
 namespace Flocking
 {
