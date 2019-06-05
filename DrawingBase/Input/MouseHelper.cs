@@ -1,34 +1,19 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Input;
 
-namespace FlappyBird
+namespace DrawingBase.Input
 {
-    internal enum ButtonState
-    {
-        Up,
-        Pressed,
-        Released,
-        Down,
-    }
-
-    static class InputHelper
-    {
-        public static readonly MouseHelper Mouse = new MouseHelper();
-
-        public static void Update()
-        {
-            Mouse.Update();
-        }
-    }
-
-    internal enum MouseButton
+    public enum MouseButton
     {
         Left,
         Right,
-        Middle
+        Middle,
+        Extended1,
+        Extended2
     }
 
-    sealed class MouseHelper
+    public sealed class MouseHelper
     {
         private MouseButtonState prevLeftMouseState = MouseButtonState.Released;
         private MouseButtonState currentLeftMouseState = MouseButtonState.Released;
@@ -36,6 +21,10 @@ namespace FlappyBird
         private MouseButtonState currentRightMouseState = MouseButtonState.Released;
         private MouseButtonState prevMiddleMouseState = MouseButtonState.Released;
         private MouseButtonState currentMiddleMouseState = MouseButtonState.Released;
+        private MouseButtonState prevExtended1MouseState = MouseButtonState.Released;
+        private MouseButtonState currentExtended1MouseState = MouseButtonState.Released;
+        private MouseButtonState prevExtended2MouseState = MouseButtonState.Released;
+        private MouseButtonState currentExtended2MouseState = MouseButtonState.Released;
 
         public void Update()
         {
@@ -45,6 +34,10 @@ namespace FlappyBird
             currentRightMouseState = Mouse.RightButton;
             prevMiddleMouseState = currentMiddleMouseState;
             currentMiddleMouseState = Mouse.MiddleButton;
+            prevExtended1MouseState = currentExtended1MouseState;
+            currentExtended1MouseState = Mouse.MiddleButton;
+            prevExtended2MouseState = currentExtended2MouseState;
+            currentExtended2MouseState = Mouse.MiddleButton;
         }
 
         public ButtonState GetState(MouseButton button)
@@ -57,6 +50,10 @@ namespace FlappyBird
                     return GetState(prevRightMouseState, currentRightMouseState);
                 case MouseButton.Middle:
                     return GetState(prevMiddleMouseState, currentMiddleMouseState);
+                case MouseButton.Extended1:
+                    return GetState(prevExtended1MouseState, currentExtended1MouseState);
+                case MouseButton.Extended2:
+                    return GetState(prevExtended2MouseState, currentExtended2MouseState);
                 default:
                     throw new Exception("Unknown button state");
             }
@@ -78,6 +75,11 @@ namespace FlappyBird
                 else
                     return ButtonState.Released;
             }
+        }
+
+        public Point GetPosition()
+        {
+            return Mouse.GetPosition(Application.Current.MainWindow);
         }
     }
 }
