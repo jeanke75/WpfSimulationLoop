@@ -1,7 +1,7 @@
 ﻿using DrawingBase;
+using DrawingBase.Input;
 using System;
 using System.Collections.Generic;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Raycasting2D
@@ -46,7 +46,8 @@ namespace Raycasting2D
 
         public override void Update(float dt)
         {
-            particle.pos = Mouse.GetPosition(this);
+            InputHelper.Update();
+            particle.pos = InputHelper.Mouse.GetPosition();
             particle.Update();
         }
 
