@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
@@ -16,9 +17,11 @@ namespace DrawingBase
         private int fps = 60;
         private DateTime prev;
 
-        private int ticks = 0;
-        private TimeSpan updateMs = new TimeSpan();
-        private TimeSpan drawMs = new TimeSpan();
+        private long infoRefreshCounter = 0;
+        private readonly List<long> updateTicksHistory;
+        private readonly List<long> drawTicksHistory;
+        private long totalUpdateTicks = 0;
+        private long totalDrawTicks = 0;
         private TimeSpan avgUpdateMs = new TimeSpan();
         private TimeSpan avgDrawMs = new TimeSpan();
 
@@ -37,6 +40,9 @@ namespace DrawingBase
             };
             AddChild(CvsDraw);
 
+            updateTicksHistory = new List<long>();
+            drawTicksHistory = new List<long>();
+
             timer = new DispatcherTimer();
             timer.Tick += GameTick;
             SetFps(fps);
@@ -47,12 +53,12 @@ namespace DrawingBase
 
         ~DrawingWindowBase()
         {
-            Cleanup();
             if (timer != null)
             {
                 timer.Stop();
                 timer.Tick -= GameTick;
             }
+            Cleanup();
         }
 
         private void SimulationBase_Loaded(object sender, RoutedEventArgs e)
@@ -74,27 +80,20 @@ namespace DrawingBase
             float dt = span.Milliseconds / 1000f;
             prev = now;
 
-            // update
+            // Update
             Stopwatch sw = new Stopwatch();
             sw.Start();
             Update(dt);
             sw.Stop();
-            updateMs += sw.Elapsed;
+            long updateTicks = sw.Elapsed.Ticks;
 
-            // draw
+            // Draw
             sw.Restart();
             CvsDraw.Children.Clear();
             DrawingVisual dv = new DrawingVisual();
             using (DrawingContext dc = dv.RenderOpen())
             {
                 Draw(dc);
-
-                if (ticks == fps)
-                {
-                    avgUpdateMs = new TimeSpan(updateMs.Ticks / fps);
-                    avgDrawMs = new TimeSpan(drawMs.Ticks / fps);
-                }
-
                 if (DisplayInfo)
                     ShowInfo(dc);
             }
@@ -106,17 +105,22 @@ namespace DrawingBase
             };
             CvsDraw.Children.Add(img);
             sw.Stop();
-            drawMs += sw.Elapsed;
+            long drawTicks = sw.Elapsed.Ticks;
 
-            if (ticks < fps)
+            // Recalculate the tick totals
+            RecalculateTickTotalAndHistory(ref totalUpdateTicks, updateTicks, updateTicksHistory, fps);
+            RecalculateTickTotalAndHistory(ref totalDrawTicks, drawTicks, drawTicksHistory, fps);
+
+            // Refresh the displayed averages every 500ms
+            if (infoRefreshCounter > 500000)
             {
-                ticks++;
+                infoRefreshCounter %= 500000;
+                avgUpdateMs = new TimeSpan(totalUpdateTicks / updateTicksHistory.Count);
+                avgDrawMs = new TimeSpan(totalDrawTicks / drawTicksHistory.Count);
             }
             else
             {
-                ticks = 0;
-                updateMs = new TimeSpan();
-                drawMs = sw.Elapsed;
+                infoRefreshCounter += span.Ticks;
             }
         }
 
@@ -177,5 +181,15 @@ namespace DrawingBase
             dc.DrawText(new FormattedText($"Heap Size: { Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString()}MB", cultureInfo, flowDirection, typeface, emSize, color, dpi), new Point(0, 30));
         }
 
+        private void RecalculateTickTotalAndHistory(ref long total, long ticks, List<long> list, int maxItems)
+        {
+            if (list.Count == maxItems)
+            {
+                total -= list[0];
+                list.RemoveAt(0);
+            }
+            total += ticks;
+            list.Add(ticks);
+        }
     }
 }
