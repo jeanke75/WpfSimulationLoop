@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BoundaryEdgeRayEmitter.cs" />
     <Compile Include="EquallySpacedRayEmitter.cs" />
     <Compile Include="Ray.cs" />
     <Page Include="MainWindow.xaml">
