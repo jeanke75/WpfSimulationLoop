@@ -2,6 +2,7 @@
 using DrawingBase.Input;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Media;
 
 namespace Raycasting2D
@@ -13,7 +14,11 @@ namespace Raycasting2D
     {
         Random random;
         Boundary[] boundaries;
-        Particle particle;
+        EquallySpacedRayEmitter equallySpacedRayEmitter;
+
+        private readonly int sceneWidth = 400;
+        private readonly int sceneHeight = 400;
+        Point prevPos;
 
         public MainWindow()
         {
@@ -22,33 +27,58 @@ namespace Raycasting2D
 
         public override void Initialize()
         {
-            SetResolution(400, 400);
+            SetResolution(sceneWidth, sceneHeight);
             random = new Random();
 
             var tempBoundaries = new List<Boundary>
             {
                 // Add outer walls
-                new Boundary(0, 0, GetWidth(), 0),
-                new Boundary(GetWidth(), 0, GetWidth(), GetHeight()),
-                new Boundary(GetWidth(), GetHeight(), 0, GetHeight()),
-                new Boundary(0, GetHeight(), 0, 0)
+                new Boundary(0, 0, sceneWidth, 0),
+                new Boundary(sceneWidth, 0, sceneWidth, sceneHeight),
+                new Boundary(sceneWidth, sceneHeight, 0, sceneHeight),
+                new Boundary(0, sceneHeight, 0, 0)
             };
             // Add random inner walls
             for (int i = 0; i < 5; i++)
             {
-                tempBoundaries.Add(new Boundary(random.Next(0, GetWidth()), random.Next(0, GetHeight()), random.Next(0, GetWidth()), random.Next(0, GetHeight())));
+                tempBoundaries.Add(new Boundary(random.Next(0, sceneWidth), random.Next(0, sceneHeight), random.Next(0, sceneWidth), random.Next(0, sceneHeight)));
             }
             boundaries = tempBoundaries.ToArray();
 
-            // Add particle
-            particle = new Particle(200, 200);
+            // Set the previous position
+            prevPos = new Point(sceneWidth / 2d, sceneHeight / 2d);
+
+            // Add ray emitter
+            equallySpacedRayEmitter = new EquallySpacedRayEmitter(prevPos.X, prevPos.Y);
         }
 
         public override void Update(float dt)
         {
             InputHelper.Update();
-            particle.pos = InputHelper.Mouse.GetPosition();
-            particle.Update();
+            Point pos = InputHelper.Mouse.GetPosition();
+            // Checks to keep the emitter in the scene
+            if (pos.X < 0)
+            {
+                pos.X = prevPos.X;
+            }
+            else if  (pos.X > sceneHeight)
+            {
+                pos.X = sceneHeight;
+            }
+            if (pos.Y < 0)
+            {
+                pos.Y = prevPos.Y;
+            }
+            else if (pos.Y > sceneWidth)
+            {
+                pos.Y = sceneWidth;
+            }
+
+            // Update each scene
+            equallySpacedRayEmitter.pos = pos;
+            equallySpacedRayEmitter.Update(boundaries);
+
+            prevPos = pos;
         }
 
         public override void Draw(DrawingContext dc)
@@ -57,8 +87,7 @@ namespace Raycasting2D
             {
                 b.Draw(dc);
             }
-            particle.Draw(dc);
-            particle.Look(boundaries, dc);
+            equallySpacedRayEmitter.Draw(dc);
         }
 
         public override void Cleanup()

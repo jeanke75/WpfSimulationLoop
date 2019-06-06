@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Media;
 
 namespace Raycasting2D
 {
     class Ray
     {
         public Point pos;
-        Vector dir;
+        public Vector dir;
 
         public Ray(Point pos, double angleInRadians)
         {
@@ -19,18 +18,14 @@ namespace Raycasting2D
             };
         }
 
-        public void Draw(DrawingContext dc)
+        public Ray(Point pos, Point throughPoint)
         {
-            dc.PushTransform(new TranslateTransform(pos.X, pos.Y));
-            dc.DrawLine(new Pen(Brushes.White, 2), new Point(0, 0), new Point(dir.X * 10, dir.Y * 10));
-            dc.Pop();
-        }
-
-        public void LookAt(double x, double y)
-        {
-            dir.X = x;
-            dir.Y = y;
-            dir.Normalize();
+            this.pos = pos;
+            dir = new Vector
+            {
+                X = throughPoint.X - pos.X,
+                Y = throughPoint.Y - pos.Y
+            };
         }
 
         public Point? Cast(Boundary wall)
