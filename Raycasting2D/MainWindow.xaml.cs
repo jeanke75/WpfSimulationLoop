@@ -12,11 +12,11 @@ namespace Raycasting2D
     /// </summary>
     public partial class MainWindow : DrawingWindowBase
     {
-        Random random;
-        Boundary[] boundaries;
-        EquallySpacedRayEmitter equallySpacedRayEmitter;
-        BoundaryEdgeRayEmitter boundaryEdgeRayEmitter;
-        IntersectingBoundaryEdgeRayEmitter intersectingBoundaryEdgeRayEmitter;
+        private Random random;
+        private Boundary[] boundaries;
+        private EquallySpacedRayEmitter equallySpacedRayEmitter;
+        private BoundaryEdgeRayEmitter boundaryEdgeRayEmitter;
+        private IntersectingBoundaryEdgeRayEmitter intersectingBoundaryEdgeRayEmitter;
 
         private readonly int sceneWidth = 400;
         private readonly int sceneHeight = 400;
@@ -38,12 +38,20 @@ namespace Raycasting2D
                 new Boundary(0, 0, sceneWidth, 0),
                 new Boundary(sceneWidth, 0, sceneWidth, sceneHeight),
                 new Boundary(sceneWidth, sceneHeight, 0, sceneHeight),
-                new Boundary(0, sceneHeight, 0, 0)
+                new Boundary(0, sceneHeight, 0, 0),
+
+                new Boundary(20, 40, 40, 20),
+                new Boundary(50, 100, 95, 65),
+
+                new Boundary(sceneWidth - 75, 25, sceneWidth - 25, 25),
+                new Boundary(sceneWidth - 25, 25, sceneWidth - 25, 75),
+                new Boundary(sceneWidth - 25, 75, sceneWidth - 75, 75),
+                new Boundary(sceneWidth - 75, 75, sceneWidth - 75, 25),
             };
             // Add random inner walls
             for (int i = 0; i < 5; i++)
             {
-                tempBoundaries.Add(new Boundary(random.Next(0, sceneWidth), random.Next(0, sceneHeight), random.Next(0, sceneWidth), random.Next(0, sceneHeight)));
+                tempBoundaries.Add(new Boundary(random.Next(0, sceneWidth), random.Next(sceneHeight / 2, sceneHeight), random.Next(0, sceneWidth), random.Next(sceneHeight / 2, sceneHeight)));
             }
             boundaries = tempBoundaries.ToArray();
 
@@ -65,7 +73,7 @@ namespace Raycasting2D
             {
                 pos.X = prevPos.X;
             }
-            else if  (pos.X > sceneHeight)
+            else if (pos.X > sceneHeight)
             {
                 pos.X = sceneHeight;
             }
