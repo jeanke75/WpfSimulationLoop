@@ -11,8 +11,8 @@ namespace Flocking
         public Vector position;
         public Vector velocity;
         public Vector acceleration;
-        private static double maxForce = 0.2;
-        private static double maxSpeed = 6;
+        private static readonly double maxForce = 0.2;
+        private static readonly double maxSpeed = 6;
 
         public Boid(Vector position)
         {
