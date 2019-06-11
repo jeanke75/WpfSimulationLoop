@@ -66,7 +66,7 @@ namespace Raycasting2D
                     Point? p = ray.Cast(boundary);
                     if (p != null)
                     {
-                        Point pt = p.GetValueOrDefault();
+                        Point pt = p.Value;
                         double dist = Math.Pow(pt.X - pos.X, 2) + Math.Pow(pt.Y - pos.Y, 2);
                         if (dist < record)
                         {
@@ -95,7 +95,7 @@ namespace Raycasting2D
                 {
                     segments[i] = new LineSegment(collisionPoints[i], true);
                 }
-                var figure = new PathFigure(collisionPoints[0], segments, true);
+                var figure = new PathFigure(collisionPoints[collisionPoints.Count - 1], segments, true);
                 var geo = new PathGeometry(new[] { figure });
                 geo.Freeze();
                 dc.DrawGeometry(emitterBrush, null, geo);
