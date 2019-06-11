@@ -16,6 +16,7 @@ namespace Raycasting2D
         Boundary[] boundaries;
         EquallySpacedRayEmitter equallySpacedRayEmitter;
         BoundaryEdgeRayEmitter boundaryEdgeRayEmitter;
+        IntersectingBoundaryEdgeRayEmitter intersectingBoundaryEdgeRayEmitter;
 
         private readonly int sceneWidth = 400;
         private readonly int sceneHeight = 400;
@@ -28,7 +29,7 @@ namespace Raycasting2D
 
         public override void Initialize()
         {
-            SetResolution(sceneWidth * 2, sceneHeight);
+            SetResolution(sceneWidth * 3, sceneHeight);
             random = new Random();
 
             var tempBoundaries = new List<Boundary>
@@ -52,6 +53,7 @@ namespace Raycasting2D
             // Add ray emitter
             equallySpacedRayEmitter = new EquallySpacedRayEmitter(prevPos.X, prevPos.Y); // Might not detect the edges correctly
             boundaryEdgeRayEmitter = new BoundaryEdgeRayEmitter(sceneWidth / 2d, sceneHeight / 2d); // Optimal if the boundaries don't intersect
+            intersectingBoundaryEdgeRayEmitter = new IntersectingBoundaryEdgeRayEmitter(sceneWidth / 2d, sceneHeight / 2d); // Optimal if the boundaries intersect
         }
 
         public override void Update(float dt)
@@ -83,6 +85,9 @@ namespace Raycasting2D
             boundaryEdgeRayEmitter.pos = pos;
             boundaryEdgeRayEmitter.Update(boundaries);
 
+            intersectingBoundaryEdgeRayEmitter.pos = pos;
+            intersectingBoundaryEdgeRayEmitter.Update(boundaries);
+
             prevPos = pos;
         }
 
@@ -100,6 +105,14 @@ namespace Raycasting2D
                 b.Draw(dc);
             }
             boundaryEdgeRayEmitter.Draw(dc);
+            dc.Pop();
+
+            dc.PushTransform(new TranslateTransform(sceneWidth * 2, 0));
+            foreach (Boundary b in boundaries)
+            {
+                b.Draw(dc);
+            }
+            intersectingBoundaryEdgeRayEmitter.Draw(dc);
             dc.Pop();
         }
 
