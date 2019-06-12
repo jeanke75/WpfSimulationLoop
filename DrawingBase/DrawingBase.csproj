@@ -51,6 +51,7 @@
     <Compile Include="DrawingContextExtension.cs" />
     <Compile Include="DrawingWindowBase.cs" />
     <Compile Include="Input\InputHelper.cs" />
+    <Compile Include="Input\KeyboardHelper.cs" />
     <Compile Include="Input\MouseHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VectorExtension.cs" />
