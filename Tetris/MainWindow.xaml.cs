@@ -37,7 +37,7 @@ namespace Tetris
 
         public override void Initialize()
         {
-            SetFps(30);
+            SetFps(10);
             SetResolution((fieldCols + 2) * tileSize, (fieldRows + 2) * tileSize);
             random = new Random();
 
@@ -52,7 +52,13 @@ namespace Tetris
             tiles.Add(8, new Tile(Colors.Red));
 
             // Add shapes
-            shapes.Add(new Square(2));
+            shapes.Add(new I(2));
+            shapes.Add(new J(3));
+            shapes.Add(new L(4));
+            shapes.Add(new O(5));
+            shapes.Add(new S(6));
+            shapes.Add(new T(7));
+            shapes.Add(new Z(8));
 
             // Create the field
             field = new int[fieldCols, fieldRows];
@@ -87,10 +93,14 @@ namespace Tetris
                         pos.X--;
                         if (HasCollision()) pos.X++;
                     }
-                    else if (InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Pressed && (pos.X + currentShape.Width()) < fieldCols)
+                    else if ((InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Pressed || InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Down) && (pos.X + currentShape.Width()) < fieldCols)
                     {
                         pos.X++;
                         if (HasCollision()) pos.X--;
+                    }
+                    else if (InputHelper.Keyboard.GetPressedState(Key.Up) == ButtonState.Pressed)
+                    {
+                        currentShape.Rotate();
                     }
 
                     if (!BottomReached())
@@ -207,6 +217,10 @@ namespace Tetris
                 }
             }
 
+            // Reset the shape rotation
+            currentShape.Reset();
+
+            // Remove the shape as the current shape
             currentShape = null;
         }
     }

@@ -1,8 +1,8 @@
 ﻿namespace Tetris.Shapes
 {
-    class Square : BaseShape
+    class O : BaseShape
     {
-        public Square(int tileId) : base(tileId)
+        public O(int tileId) : base(tileId)
         {
             var state = new bool[2, 2];
             state[0, 0] = true;

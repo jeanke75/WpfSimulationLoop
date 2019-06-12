@@ -57,7 +57,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Shapes\BaseShape.cs" />
-    <Compile Include="Shapes\Square.cs" />
+    <Compile Include="Shapes\I.cs" />
+    <Compile Include="Shapes\J.cs" />
+    <Compile Include="Shapes\L.cs" />
+    <Compile Include="Shapes\O.cs" />
+    <Compile Include="Shapes\S.cs" />
+    <Compile Include="Shapes\T.cs" />
+    <Compile Include="Shapes\Z.cs" />
     <Compile Include="Tile.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

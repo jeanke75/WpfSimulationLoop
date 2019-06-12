@@ -33,6 +33,11 @@ namespace Tetris.Shapes
             return value;
         }
 
+        public void Reset()
+        {
+            state = 0;
+        }
+
         public int Width()
         {
             return CurrentState().GetLength(1);
@@ -40,7 +45,18 @@ namespace Tetris.Shapes
 
         public int Height()
         {
-            return CurrentState().GetLength(0);
+            // Find the lowest tile in the block
+            bool[,] s = CurrentState(); 
+            for (int row = s.GetLength(0) - 1; row >= 0; row--)
+            {
+                for (int col = 0; col < s.GetLength(1); col++)
+                {
+                    if (s[col, row])
+                        return row + 1;
+                }
+            }
+
+            return 0;
         }
     }
 }
