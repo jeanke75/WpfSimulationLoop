@@ -91,12 +91,12 @@ namespace Tetris
                 else
                 {
                     // Move the shape left/right
-                    if (InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Pressed )//|| InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Down)
+                    if (InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Pressed )
                     {
                         pos.X--;
                         if (HasCollision()) pos.X++;
                     }
-                    else if (InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Pressed)// || InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Down)
+                    else if (InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Pressed)
                     {
                         pos.X++;
                         if (HasCollision()) pos.X--;
