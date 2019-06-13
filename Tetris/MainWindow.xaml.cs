@@ -27,6 +27,9 @@ namespace Tetris
         private BaseShape currentShape;
         private Point pos;
 
+        private int framesUntillDrop = 0;
+        private readonly int framesBetweenAutoDrop = 10;
+
         private bool gameOver;
         private FormattedText gameOverText;
 
@@ -37,7 +40,6 @@ namespace Tetris
 
         public override void Initialize()
         {
-            SetFps(10);
             SetResolution((fieldCols + 2) * tileSize, (fieldRows + 2) * tileSize);
             random = new Random();
 
@@ -65,6 +67,7 @@ namespace Tetris
 
             // Init the position
             pos = new Point(0, 0);
+            framesUntillDrop = framesBetweenAutoDrop;
             gameOver = false;
             gameOverText = new FormattedText($"GAME OVER", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Georgia"), GetWidth() / 10d, Brushes.White, VisualTreeHelper.GetDpi(this).PixelsPerDip);
         }
@@ -87,34 +90,48 @@ namespace Tetris
                 }
                 else
                 {
-                    var currentPos = new Point(pos.X, pos.Y);
-                    if ((InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Pressed || InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Down) && pos.X > 0)
+                    // Move the shape left/right
+                    if (InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Pressed )//|| InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Down)
                     {
                         pos.X--;
                         if (HasCollision()) pos.X++;
                     }
-                    else if ((InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Pressed || InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Down) && (pos.X + currentShape.Width()) < fieldCols)
+                    else if (InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Pressed)// || InputHelper.Keyboard.GetPressedState(Key.Right) == ButtonState.Down)
                     {
                         pos.X++;
                         if (HasCollision()) pos.X--;
                     }
-                    else if (InputHelper.Keyboard.GetPressedState(Key.Up) == ButtonState.Pressed)
+                    // Rotate the shape
+                    if (InputHelper.Keyboard.GetPressedState(Key.Up) == ButtonState.Pressed)
                     {
                         currentShape.Rotate();
+                        if (HasCollision()) currentShape.UndoRotate();
                     }
-
-                    if (!BottomReached())
+                    
+                    framesUntillDrop--;
+                    if (framesUntillDrop == 0) // Drop the shape
                     {
                         pos.Y++;
-                        if (HasCollision())
-                        {
-                            pos = currentPos;
-                            AddShapeToField();
-                        }
+                        framesUntillDrop = framesBetweenAutoDrop;
                     }
-                    else
+                    else if (InputHelper.Keyboard.GetPressedState(Key.Down) == ButtonState.Pressed || InputHelper.Keyboard.GetPressedState(Key.Down) == ButtonState.Down) // Drop the shape manually between auto drops
                     {
+                        pos.Y++;
+                    }
+
+                    if (HasCollision())
+                    {
+                        pos.Y--;
+
                         AddShapeToField();
+
+                        FullRowsCheck();
+
+                        // Reset the shape rotation
+                        currentShape.Reset();
+
+                        // Remove the shape as the current shape
+                        currentShape = null;
                     }
                 }
             }
@@ -184,11 +201,6 @@ namespace Tetris
         {
         }
 
-        private bool BottomReached()
-        {
-            return pos.Y + currentShape.Height() == fieldRows;
-        }
-
         private bool HasCollision()
         {
             var state = currentShape.CurrentState();
@@ -196,7 +208,17 @@ namespace Tetris
             {
                 for (int col = 0; col < currentShape.Width(); col++)
                 {
-                    if (state[col, row] && field[(int)pos.X + col, (int)pos.Y + row] > 0) return true;
+                    if (state[col, row])
+                    {
+                        // Collision with the left side of the playing field
+                        if ((int)pos.X + col < 0) return true;
+                        // Collision with the right side of the playing field
+                        if ((int)pos.X + col >= fieldCols) return true;
+                        // Collision with the bottom of the playing field
+                        if ((int)pos.Y + row >= fieldRows) return true;
+                        // Collision with a previous shape
+                        if (field[(int)pos.X + col, (int)pos.Y + row] > 0) return true;
+                    }
                 }
             }
             return false;
@@ -204,7 +226,6 @@ namespace Tetris
 
         private void AddShapeToField()
         {
-            // Add the shape to the field
             var state = currentShape.CurrentState();
             for (int row = 0; row < currentShape.Height(); row++)
             {
@@ -216,12 +237,34 @@ namespace Tetris
                     }
                 }
             }
+        }
 
-            // Reset the shape rotation
-            currentShape.Reset();
-
-            // Remove the shape as the current shape
-            currentShape = null;
+        private void FullRowsCheck()
+        {
+            for (int row = (int)pos.Y; row < field.GetLength(1); row++)
+            {
+                bool fullRow = true;
+                for (int col = 0; col < field.GetLength(0); col++)
+                {
+                    if (field[col, row] == 0)
+                    {
+                        fullRow = false;
+                        break;
+                    }
+                }
+                if (fullRow)
+                {
+                    // Clear 
+                    for (int r = row; r > 0; r--)
+                    {
+                        for (int c = 0; c < field.GetLength(0); c++)
+                        {
+                            field[c, r] = field[c, r - 1];
+                            field[c, r - 1] = 0;
+                        }
+                    }
+                }
+            }
         }
     }
 }
