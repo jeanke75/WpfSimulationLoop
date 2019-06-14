@@ -44,6 +44,11 @@ namespace Tetris.Shapes
             return states[state];
         }
 
+        public bool[,] DefaultState()
+        {
+            return states[0];
+        }
+
         public void Reset()
         {
             state = 0;

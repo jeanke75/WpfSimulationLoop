@@ -24,14 +24,24 @@ namespace Tetris
         private readonly List<BaseShape> shapes = new List<BaseShape>();
         private int[,] field;
 
+        private BaseShape nextShape;
         private BaseShape currentShape;
         private Point pos;
 
-        private int framesUntillDrop = 0;
+        private int framesUntillDrop;
         private readonly int framesBetweenAutoDrop = 10;
+
+        private int score;
+        private int lines;
 
         private bool gameOver;
         private FormattedText gameOverText;
+
+        private readonly Typeface typeface = new Typeface("Georgia");
+        private readonly Brush gameOverBrush = Brushes.White;
+        private readonly Brush infoBackgroundBrush = Brushes.Gray;
+        private readonly Brush infoTextBrush = Brushes.Black;
+        private readonly Brush infoBoxBrush = Brushes.DarkGray;
 
         public MainWindow()
         {
@@ -40,7 +50,7 @@ namespace Tetris
 
         public override void Initialize()
         {
-            SetResolution((fieldCols + 2) * tileSize, (fieldRows + 2) * tileSize);
+            SetResolution((int)((fieldCols + 2) * tileSize * 1.75), (fieldRows + 2) * tileSize);
             random = new Random();
 
             // Add tiles
@@ -65,11 +75,20 @@ namespace Tetris
             // Create the field
             field = new int[fieldCols, fieldRows];
 
-            // Init the position
+            // Brushes
+            gameOverBrush.Freeze();
+            infoBackgroundBrush.Freeze();
+            infoTextBrush.Freeze();
+            infoBoxBrush.Freeze();
+
+            // Init the game parameters
+            nextShape = GetRandomshape();
             pos = new Point(0, 0);
             framesUntillDrop = framesBetweenAutoDrop;
+            score = 0;
+            lines = 0;
             gameOver = false;
-            gameOverText = new FormattedText($"GAME OVER", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Georgia"), GetWidth() / 10d, Brushes.White, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+            gameOverText = new FormattedText($"GAME OVER", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 10d, gameOverBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
         }
 
         public override void Update(float dt)
@@ -81,7 +100,8 @@ namespace Tetris
                 if (currentShape == null)
                 {
                     // If there is no shape, get a new one
-                    currentShape = shapes[random.Next(shapes.Count)];
+                    currentShape = nextShape;
+                    nextShape = GetRandomshape();
                     pos.X = (fieldCols - currentShape.Width()) / 2;
                     pos.Y = 0;
 
@@ -125,7 +145,9 @@ namespace Tetris
 
                         AddShapeToField();
 
-                        FullRowsCheck();
+                        var linesCleared = ClearLines();
+                        lines += linesCleared;
+                        UpdateScore(linesCleared);
 
                         // Reset the shape rotation
                         currentShape.Reset();
@@ -190,6 +212,60 @@ namespace Tetris
             }
             dc.Pop();
 
+            var playFieldWidth = (fieldCols + 2) * tileSize;
+            var infoWidth = GetWidth() - playFieldWidth;
+            dc.PushTransform(new TranslateTransform(playFieldWidth, 0));
+            // Draw info background
+            dc.DrawRectangle(infoBackgroundBrush, null, new Rect(0, 0, infoWidth, GetHeight()));
+            
+            var maxScoreWidth = new FormattedText(int.MaxValue.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 20d, infoTextBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip).Width;
+            var scoreAndLinesBoxWidth = maxScoreWidth + (infoWidth - maxScoreWidth) / 10;
+            // Draw the scores and lines in a box
+            dc.PushTransform(new TranslateTransform((infoWidth - scoreAndLinesBoxWidth) / 2d, tileSize));
+            // Background
+            dc.DrawRectangle(infoBoxBrush, null, new Rect(0, 0, scoreAndLinesBoxWidth, tileSize * 5));
+
+            // Score
+            var scoreText = new FormattedText("SCORE", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 20d, infoTextBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+            dc.DrawText(scoreText, new Point((scoreAndLinesBoxWidth - scoreText.Width) / 2d, 0));
+
+            var scoreValue = new FormattedText(score.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 20d, infoTextBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+            dc.DrawText(scoreValue, new Point((scoreAndLinesBoxWidth - scoreValue.Width) / 2d, tileSize));
+
+            // Lines
+            var linesText = new FormattedText("LINES", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 20d, infoTextBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+            dc.DrawText(linesText, new Point((scoreAndLinesBoxWidth - linesText.Width) / 2d, tileSize * 2.75));
+
+            var linesValue = new FormattedText(lines.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 20d, infoTextBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+            dc.DrawText(linesValue, new Point((scoreAndLinesBoxWidth - linesValue.Width) / 2d, tileSize * 3.75));
+            dc.Pop();
+
+            // Draw next shape
+            var nextShapeBoxSize = infoWidth / 3d;
+            dc.PushTransform(new TranslateTransform((infoWidth - nextShapeBoxSize) / 2d, GetHeight() - nextShapeBoxSize - tileSize));
+            // Background
+            dc.DrawRectangle(infoBoxBrush, null, new Rect(0, 0, nextShapeBoxSize, nextShapeBoxSize));
+
+            // Shape
+            var nextShapeState = nextShape.DefaultState();
+            tiles.TryGetValue(nextShape.tileId, out Tile nextShapeTile);
+            var nextShapeTileSize = nextShapeBoxSize / 6d; // widest block is 4tiles + 2x 1tile offset
+            var nextShapeOffset = nextShapeTileSize * (1 + (4 - nextShape.Width()) / 2d);
+            dc.PushTransform(new TranslateTransform(nextShapeOffset, nextShapeOffset));
+            for (int row = 0; row < nextShape.Height(); row++)
+            {
+                for (int col = 0; col < nextShape.Width(); col++)
+                {
+                    if (nextShapeState[col, row])
+                    {
+                        nextShapeTile.Draw(dc, col * nextShapeTileSize, row * nextShapeTileSize, nextShapeTileSize);
+                    }
+                }
+            }
+            dc.Pop();
+            dc.Pop();
+            dc.Pop();
+
             // Draw gameover
             if (gameOver)
             {
@@ -239,8 +315,9 @@ namespace Tetris
             }
         }
 
-        private void FullRowsCheck()
+        private int ClearLines()
         {
+            int linesCleared = 0;
             for (int row = (int)pos.Y; row < field.GetLength(1); row++)
             {
                 bool fullRow = true;
@@ -263,8 +340,37 @@ namespace Tetris
                             field[c, r - 1] = 0;
                         }
                     }
+                    linesCleared++;
                 }
             }
+
+            return linesCleared;
+        }
+
+        private void UpdateScore(int rowsCleared)
+        {
+            switch (rowsCleared)
+            {
+                case 1:
+                    score += 40;
+                    break;
+                case 2:
+                    score += 100;
+                    break;
+                case 3:
+                    score += 300;
+                    break;
+                case 4:
+                    score += 1200;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private BaseShape GetRandomshape()
+        {
+            return shapes[random.Next(shapes.Count)];
         }
     }
 }
