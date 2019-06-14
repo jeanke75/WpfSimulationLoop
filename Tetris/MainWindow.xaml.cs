@@ -17,12 +17,10 @@ namespace Tetris
     {
         private Random random;
         private readonly int tileSize = 20;
-        private readonly int fieldRows = 20;
-        private readonly int fieldCols = 10;
 
         private readonly Dictionary<int, Tile> tiles = new Dictionary<int, Tile>();
         private readonly List<BaseShape> shapes = new List<BaseShape>();
-        private int[,] field;
+        private Field field;
 
         private BaseShape nextShape;
         private BaseShape currentShape;
@@ -49,8 +47,7 @@ namespace Tetris
         }
 
         public override void Initialize()
-        {
-            SetResolution((int)((fieldCols + 2) * tileSize * 1.75), (fieldRows + 2) * tileSize);
+        {            
             random = new Random();
 
             // Add tiles
@@ -73,7 +70,10 @@ namespace Tetris
             shapes.Add(new Z(8));
 
             // Create the field
-            field = new int[fieldCols, fieldRows];
+            field = new Field(20, 10);
+
+            // Set the resolution
+            SetResolution((int)((field.Columns + 2) * tileSize * 1.75), (field.Rows + 2) * tileSize);
 
             // Brushes
             gameOverBrush.Freeze();
@@ -102,7 +102,7 @@ namespace Tetris
                     // If there is no shape, get a new one
                     currentShape = nextShape;
                     nextShape = GetRandomshape();
-                    pos.X = (fieldCols - currentShape.Width()) / 2;
+                    pos.X = (field.Columns - currentShape.Width()) / 2;
                     pos.Y = 0;
 
                     if (HasCollision())
@@ -143,9 +143,9 @@ namespace Tetris
                     {
                         pos.Y--;
 
-                        AddShapeToField();
+                        field.AddShape(currentShape, pos);
 
-                        var linesCleared = ClearLines();
+                        var linesCleared = field.ClearLines(pos);
                         lines += linesCleared;
                         UpdateScore(linesCleared);
 
@@ -163,56 +163,35 @@ namespace Tetris
         {
             // Draw fieldborder
             tiles.TryGetValue(1, out Tile borderTile);
-            for (int i = 0; i < fieldCols + 2; i++)
+            for (int i = 0; i < field.Columns + 2; i++)
             {
                 // Top border
                 borderTile.Draw(dc, i * tileSize, 0, tileSize);
                 // Bottom border
-                borderTile.Draw(dc, i * tileSize, (fieldRows + 1) * tileSize, tileSize);
+                borderTile.Draw(dc, i * tileSize, (field.Rows + 1) * tileSize, tileSize);
             }
 
-            for (int i = 0; i < fieldRows; i++)
+            for (int i = 0; i < field.Rows; i++)
             {
                 // Left border
                 borderTile.Draw(dc, 0, tileSize + i * tileSize, tileSize);
                 // Right border
-                borderTile.Draw(dc, (fieldCols + 1) * tileSize, tileSize + i * tileSize, tileSize);
+                borderTile.Draw(dc, (field.Columns + 1) * tileSize, tileSize + i * tileSize, tileSize);
             }
-            
-            dc.PushTransform(new TranslateTransform(tileSize, tileSize));
+
             // Draw field
-            for (int row = 0; row < field.GetLength(1); row++)
-            {
-                for (int col = 0; col < field.GetLength(0); col++)
-                {
-                    var tileId = field[col, row];
-                    if (tileId > 0)
-                    {
-                        tiles.TryGetValue(tileId, out Tile tile);
-                        tile.Draw(dc, col * tileSize, row * tileSize, tileSize);
-                    }
-                }
-            }
+            field.Draw(dc, tileSize, tiles);
 
             // Draw current shape
             if (currentShape != null)
             {
-                var state = currentShape.CurrentState();
-                for (int row = 0; row < currentShape.Height(); row++)
-                {
-                    for (int col = 0; col < currentShape.Width(); col++)
-                    {
-                        if (state[col, row])
-                        {
-                            tiles.TryGetValue(currentShape.tileId, out Tile tile);
-                            tile.Draw(dc, (pos.X + col) * tileSize, (pos.Y + row) * tileSize, tileSize);
-                        }
-                    }
-                }
+                dc.PushTransform(new TranslateTransform(pos.X * tileSize, pos.Y * tileSize));
+                currentShape.Draw(dc, tiles, tileSize);
+                dc.Pop();
             }
             dc.Pop();
 
-            var playFieldWidth = (fieldCols + 2) * tileSize;
+            var playFieldWidth = (field.Columns + 2) * tileSize;
             var infoWidth = GetWidth() - playFieldWidth;
             dc.PushTransform(new TranslateTransform(playFieldWidth, 0));
             // Draw info background
@@ -247,21 +226,10 @@ namespace Tetris
             dc.DrawRectangle(infoBoxBrush, null, new Rect(0, 0, nextShapeBoxSize, nextShapeBoxSize));
 
             // Shape
-            var nextShapeState = nextShape.DefaultState();
-            tiles.TryGetValue(nextShape.tileId, out Tile nextShapeTile);
             var nextShapeTileSize = nextShapeBoxSize / 6d; // widest block is 4tiles + 2x 1tile offset
             var nextShapeOffset = nextShapeTileSize * (1 + (4 - nextShape.Width()) / 2d);
             dc.PushTransform(new TranslateTransform(nextShapeOffset, nextShapeOffset));
-            for (int row = 0; row < nextShape.Height(); row++)
-            {
-                for (int col = 0; col < nextShape.Width(); col++)
-                {
-                    if (nextShapeState[col, row])
-                    {
-                        nextShapeTile.Draw(dc, col * nextShapeTileSize, row * nextShapeTileSize, nextShapeTileSize);
-                    }
-                }
-            }
+            nextShape.Draw(dc, tiles, nextShapeTileSize, false);
             dc.Pop();
             dc.Pop();
             dc.Pop();
@@ -279,72 +247,7 @@ namespace Tetris
 
         private bool HasCollision()
         {
-            var state = currentShape.CurrentState();
-            for (int row = 0; row < currentShape.Height(); row++)
-            {
-                for (int col = 0; col < currentShape.Width(); col++)
-                {
-                    if (state[col, row])
-                    {
-                        // Collision with the left side of the playing field
-                        if ((int)pos.X + col < 0) return true;
-                        // Collision with the right side of the playing field
-                        if ((int)pos.X + col >= fieldCols) return true;
-                        // Collision with the bottom of the playing field
-                        if ((int)pos.Y + row >= fieldRows) return true;
-                        // Collision with a previous shape
-                        if (field[(int)pos.X + col, (int)pos.Y + row] > 0) return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private void AddShapeToField()
-        {
-            var state = currentShape.CurrentState();
-            for (int row = 0; row < currentShape.Height(); row++)
-            {
-                for (int col = 0; col < currentShape.Width(); col++)
-                {
-                    if (state[col, row])
-                    {
-                        field[(int)pos.X + col, (int)pos.Y + row] = currentShape.tileId;
-                    }
-                }
-            }
-        }
-
-        private int ClearLines()
-        {
-            int linesCleared = 0;
-            for (int row = (int)pos.Y; row < field.GetLength(1); row++)
-            {
-                bool fullRow = true;
-                for (int col = 0; col < field.GetLength(0); col++)
-                {
-                    if (field[col, row] == 0)
-                    {
-                        fullRow = false;
-                        break;
-                    }
-                }
-                if (fullRow)
-                {
-                    // Clear 
-                    for (int r = row; r > 0; r--)
-                    {
-                        for (int c = 0; c < field.GetLength(0); c++)
-                        {
-                            field[c, r] = field[c, r - 1];
-                            field[c, r - 1] = 0;
-                        }
-                    }
-                    linesCleared++;
-                }
-            }
-
-            return linesCleared;
+            return currentShape.HasCollision(field, pos);
         }
 
         private void UpdateScore(int rowsCleared)

@@ -56,6 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Field.cs" />
     <Compile Include="Shapes\BaseShape.cs" />
     <Compile Include="Shapes\I.cs" />
     <Compile Include="Shapes\J.cs" />
