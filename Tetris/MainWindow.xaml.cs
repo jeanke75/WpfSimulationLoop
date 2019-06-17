@@ -81,14 +81,10 @@ namespace Tetris
             infoTextBrush.Freeze();
             infoBoxBrush.Freeze();
 
-            // Init the game parameters
-            nextShape = GetRandomshape();
-            pos = new Point(0, 0);
-            framesUntillDrop = framesBetweenAutoDrop;
-            score = 0;
-            lines = 0;
-            gameOver = false;
+            // Texts
             gameOverText = new FormattedText($"GAME OVER", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 10d, gameOverBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+
+            NewGame();
         }
 
         public override void Update(float dt)
@@ -156,6 +152,10 @@ namespace Tetris
                         currentShape = null;
                     }
                 }
+            }
+            else if (InputHelper.Keyboard.GetPressedState(Key.Space) == ButtonState.Pressed)
+            {
+                NewGame();
             }
         }
 
@@ -243,6 +243,18 @@ namespace Tetris
 
         public override void Cleanup()
         {
+        }
+
+        private void NewGame()
+        {
+            field.Clear();
+            currentShape = null;
+            nextShape = GetRandomshape();
+            pos = new Point(0, 0);
+            framesUntillDrop = framesBetweenAutoDrop;
+            score = 0;
+            lines = 0;
+            gameOver = false;
         }
 
         private bool HasCollision()

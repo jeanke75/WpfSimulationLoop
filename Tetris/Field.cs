@@ -103,5 +103,16 @@ namespace Tetris
                 }
             }
         }
+
+        public void Clear()
+        {
+            for (int row = 0; row < Rows; row++)
+            {
+                for (int column = 0; column < Columns; column++)
+                {
+                    cells[column, row] = 0;
+                }
+            }
+        }
     }
 }
