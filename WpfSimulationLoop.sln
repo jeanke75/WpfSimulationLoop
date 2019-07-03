@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raycasting2D", "Raycasting2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tetris", "Tetris\Tetris.csproj", "{ED3A78C3-8F7B-4939-80B4-95007A7A4F0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalTrees", "FractalTrees\FractalTrees.csproj", "{A0E99971-BC08-4084-8673-268F492969EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{ED3A78C3-8F7B-4939-80B4-95007A7A4F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED3A78C3-8F7B-4939-80B4-95007A7A4F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED3A78C3-8F7B-4939-80B4-95007A7A4F0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0E99971-BC08-4084-8673-268F492969EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0E99971-BC08-4084-8673-268F492969EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0E99971-BC08-4084-8673-268F492969EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0E99971-BC08-4084-8673-268F492969EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
