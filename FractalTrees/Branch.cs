@@ -7,10 +7,10 @@ namespace FractalTrees
 {
     class Branch
     {
-        private static readonly Random rnd = new Random();
-        private static readonly int maxAngle = 60;
-        private static readonly int subBranches = 3;
-        private static readonly double minSizeThreshold = 10d;
+        private static readonly int maxAngle = 55;
+        private static readonly int minSubBranches = 3;
+        private static readonly int maxSubBranches = 14;
+        private static readonly double minSizeThreshold = 25d;
 
         private readonly Point start;
         private readonly Point end;
@@ -18,6 +18,8 @@ namespace FractalTrees
         private readonly double angle;
 
         private int age;
+
+        private int leafBrushId = -1;
 
         private List<Branch> branches;
 
@@ -32,22 +34,31 @@ namespace FractalTrees
             age = 1;
         }
 
-        public void Draw(DrawingContext dc, Brush wood, Brush leaf)
+        public void Draw(DrawingContext dc, Brush oldBranchBrush, Brush newBranchBrush, List<Brush> leafBrushes)
         {
-            if (age > 2)
+            if (age > 1)
             {
-                dc.DrawLine(new Pen(wood, age), start, end);
+                dc.DrawLine(new Pen(oldBranchBrush, age), start, end);
             }
             else
             {
-                dc.DrawLine(new Pen(leaf, age), start, end);
+                dc.DrawLine(new Pen(newBranchBrush, age), start, end);
+                if (age == 1)
+                {
+                    if (leafBrushId == -1)
+                    {
+                        leafBrushId = MainWindow.random.Next(leafBrushes.Count);
+                    }
+
+                    dc.DrawEllipse(leafBrushes[leafBrushId], null, end, 5, 3);
+                }
             }
                 
             if (branches != null)
             {
                 foreach (Branch b in branches)
                 {
-                    b.Draw(dc, wood, leaf);
+                    b.Draw(dc, oldBranchBrush, newBranchBrush, leafBrushes);
                 }
             }
         }
@@ -59,13 +70,15 @@ namespace FractalTrees
                 // Only add sub branches if the current branch is big enough
                 if (size >= minSizeThreshold)
                 {
+                    int subBranches = MainWindow.random.Next(minSubBranches, maxSubBranches + 1);
                     branches = new List<Branch>();
                     int subspace = maxAngle * 2 / subBranches;
                     for (int i = 0; i < subBranches; i++)
                     {
-                        double newSize = size * (70 / 100d);
-                        branches.Add(new Branch(end, newSize, angle + rnd.Next(-maxAngle + i * subspace, maxAngle - (subBranches - 1 - i) * subspace)));
+                        double newSize = size * (MainWindow.random.Next(5, 85) / 100d);
+                        branches.Add(new Branch(end, newSize, angle + MainWindow.random.Next(-maxAngle + i * subspace, maxAngle - (subBranches - 1 - i) * subspace)));
                     }
+                    leafBrushId = -1; // Not needed, but this way all branches that don't display a leaf will have id -1
                     age++;
                     return true;
                 }
