@@ -1,4 +1,5 @@
 ﻿using DrawingBase;
+using DrawingBase.Input;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -18,6 +19,8 @@ namespace FractalTrees
         private readonly Brush newBrancheBrush = Brushes.SandyBrown;
         private readonly List<Brush> leafBrushes = new List<Brush>();
 
+        private readonly KeyboardHelper keyboardHelper = new KeyboardHelper();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -27,7 +30,7 @@ namespace FractalTrees
         {
             SetFps(2);
 
-            tree = new Branch(new Point(0, 0), 150, -90);
+            CreateNewTree();
 
             oldBrancheBrush.Freeze();
             newBrancheBrush.Freeze();
@@ -42,7 +45,16 @@ namespace FractalTrees
 
         public override void Update(float dt)
         {
-            tree.Grow();
+            keyboardHelper.Update();
+
+            if (keyboardHelper.GetPressedState(System.Windows.Input.Key.F5) == ButtonState.Pressed)
+            {
+                CreateNewTree();
+            }
+            else
+            {
+                tree.Grow();
+            }
         }
 
         public override void Draw(DrawingContext dc)
@@ -54,6 +66,11 @@ namespace FractalTrees
 
         public override void Cleanup()
         {
+        }
+
+        private void CreateNewTree()
+        {
+            tree = new Branch(new Point(0, 0), 150, -90);
         }
     }
 }
