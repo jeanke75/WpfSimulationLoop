@@ -5,7 +5,7 @@
 // Based on work by Heikki Törmälä (2012) and Stefan Gustavson (2006).
 using System;
 
-namespace World
+namespace World.Noise
 {
     /// <summary>
     /// Implementation of the Perlin simplex noise, an improved Perlin noise algorithm.

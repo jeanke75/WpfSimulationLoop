@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace World
+namespace World.Noise
 {
     static class Perlin
     {

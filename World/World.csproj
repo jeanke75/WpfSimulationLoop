@@ -57,8 +57,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Perlin.cs" />
-    <Compile Include="Simplex.cs" />
+    <Compile Include="Noise\Perlin.cs" />
+    <Compile Include="Noise\Simplex.cs" />
+    <Compile Include="Generator\WorldGenerator.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
