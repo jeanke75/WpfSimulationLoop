@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarshCrossing", "MarshCross
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "World", "World\World.csproj", "{C35D2BB5-B377-4129-BD78-684A5ED52D58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AoE", "AoE\AoE.csproj", "{624D0F35-B031-418A-8356-99361A2150F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{C35D2BB5-B377-4129-BD78-684A5ED52D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C35D2BB5-B377-4129-BD78-684A5ED52D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C35D2BB5-B377-4129-BD78-684A5ED52D58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{624D0F35-B031-418A-8356-99361A2150F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{624D0F35-B031-418A-8356-99361A2150F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{624D0F35-B031-418A-8356-99361A2150F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{624D0F35-B031-418A-8356-99361A2150F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
