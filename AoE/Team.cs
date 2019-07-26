@@ -7,13 +7,13 @@ namespace AoE
     {
         public readonly uint Id;
         public readonly Color Color;
-        public readonly List<Unit> Units;
+        public readonly List<BaseUnit> Units;
 
         public Team(uint teamId, Color color)
         {
             Id = teamId;
             Color = color;
-            Units = new List<Unit>();
+            Units = new List<BaseUnit>();
         }
     }
 }

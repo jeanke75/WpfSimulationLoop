@@ -1,8 +1,8 @@
 ﻿using AoE.Units;
 using DrawingBase;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
+using System.Windows;
 using System.Windows.Media;
 
 namespace AoE
@@ -12,36 +12,48 @@ namespace AoE
     /// </summary>
     public partial class MainWindow : DrawingWindowBase
     {
+        public static readonly Random random = new Random();
+        public static readonly double tilesize = 10f;
+        public static readonly bool ShowLineOfSight = true;
+        public static readonly bool ShowAttackRange = true;
+        public static readonly bool ShowTimeUntillAttack = true;
         readonly List<Team> teams = new List<Team>();
+        readonly List<BaseUnit> units = new List<BaseUnit>();
 
         public override void Initialize()
         {
             SetResolution(800, 600);
 
-            var team1 = new Team(0, Colors.Yellow);
-            for (int i = 0; i < 1; i++)
+            for (uint i = 0; i < 2; i++)
             {
-                team1.Units.Add(new LongSwordsman(new Vector2(15, 200 + i * 30), team1));
+                teams.Add(new Team(i, Color.FromRgb((byte)random.Next(50, 255), (byte)random.Next(50, 255), (byte)random.Next(50, 255))));
             }
-            teams.Add(team1);
 
-            var team2 = new Team(1, Colors.Cyan);
             for (int i = 0; i < 1; i++)
             {
-                team2.Units.Add(new LongSwordsman(new Vector2(45, 200 + i * 30), team2));
+                units.Add(new Knight(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), teams[0]));
             }
-            teams.Add(team2);
+            for (int i = 0; i < 1; i++)
+            {
+                units.Add(new Archer(new Vector((random.NextDouble() + 7) * tilesize, 200 + i * 30), teams[1]));
+            }
         }
 
         public override void Update(float dt)
         {
-
+            for (int i = units.Count - 1; i >= 0; i--)
+            {
+                var unit = units[i];
+                if (unit.HitPoints > 0)
+                    unit.Update(dt, units);
+                else
+                    units.Remove(unit);
+            }
         }
 
         public override void Draw(DrawingContext dc)
         {
-            var units = teams.SelectMany(x => x.Units).ToList();
-            foreach (Unit unit in units)
+            foreach (BaseUnit unit in units)
             {
                 unit.Draw(dc, teams);
             }

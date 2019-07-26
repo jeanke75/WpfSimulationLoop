@@ -58,8 +58,11 @@
     </ApplicationDefinition>
     <Compile Include="Team.cs" />
     <Compile Include="Units\Archer.cs" />
-    <Compile Include="Units\LongSwordsman.cs" />
-    <Compile Include="Units\Unit.cs" />
+    <Compile Include="Units\BaseRangedUnit.cs" />
+    <Compile Include="Units\Knight.cs" />
+    <Compile Include="Units\Militia.cs" />
+    <Compile Include="Units\BaseUnit.cs" />
+    <Compile Include="Units\Spearman.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
