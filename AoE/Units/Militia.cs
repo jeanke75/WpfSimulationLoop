@@ -3,11 +3,11 @@ using System.Windows.Media;
 
 namespace AoE.Units
 {
-    class Knight : BaseUnit
+    class Militia : BaseUnit
     {
-        public Knight(Vector position, Team team) : base(position, 10f, 30f, 100, 10, 0, 1.83f, 2, 2, 1.35f, 4, Colors.LightBlue, team)
+        public Militia(Vector position, Team team) : base(position, 10f, 30f, "Militia", 40, 4, 0, 2.03f, 0, 1, 0.9f, 4, Colors.Gray, team)
         {
-            ArmorTypes.Add(ArmorType.Cavalry, 0);
+            ArmorTypes.Add(ArmorType.Infantry, 0);
         }
     }
 }

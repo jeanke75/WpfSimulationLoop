@@ -57,10 +57,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Team.cs" />
+    <Compile Include="Units\Mangonel.cs" />
     <Compile Include="Units\Archer.cs" />
     <Compile Include="Units\BaseRangedUnit.cs" />
-    <Compile Include="Units\Knight.cs" />
     <Compile Include="Units\Militia.cs" />
+    <Compile Include="Units\Knight.cs" />
     <Compile Include="Units\BaseUnit.cs" />
     <Compile Include="Units\Spearman.cs" />
     <Page Include="MainWindow.xaml">
@@ -109,5 +110,6 @@
       <Name>DrawingBase</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

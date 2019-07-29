@@ -11,11 +11,13 @@ namespace AoE
     {
         None,
         Archer,
+        Building,
         Camel,
         Cavalry,
         EagleWarrior,
         Infantry,
         Ship,
+        SiegeWeapon,
         Spearman,
         WarElephant
     }
@@ -26,6 +28,7 @@ namespace AoE
         public readonly float Width;
         public readonly float Height;
         public readonly float Radius;
+        public readonly string Name;
         public readonly int HitPointsMax;
         private int _HitPoints;
         public int HitPoints
@@ -60,12 +63,13 @@ namespace AoE
 
         public Team Team { get; set; }
 
-        public BaseUnit(Vector position, float width, float height, int hitPoints, int meleeAttack, int pierceAttack, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, Color color, Team team)
+        public BaseUnit(Vector position, float width, float height, string name, int hitPoints, int meleeAttack, int pierceAttack, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, Color color, Team team)
         {
             Position = position;
             Width = width;
             Height = height;
             Radius = width < height ? width / 2f : height / 2f;
+            Name = name;
             HitPointsMax = hitPoints >= 1 ? hitPoints : 1;
             HitPoints = HitPointsMax;
             MeleeAttack = meleeAttack >= 0 ? meleeAttack : 0;
