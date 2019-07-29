@@ -57,6 +57,21 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Team.cs" />
+    <Compile Include="Units\BatteringRam.cs" />
+    <Compile Include="Units\BombardCannon.cs" />
+    <Compile Include="Units\SiegeTower.cs" />
+    <Compile Include="Units\Scorpion.cs" />
+    <Compile Include="Units\Tarkan.cs" />
+    <Compile Include="Units\Condotierro.cs" />
+    <Compile Include="Units\CavalryArcher.cs" />
+    <Compile Include="Units\Genitour.cs" />
+    <Compile Include="Units\Camel.cs" />
+    <Compile Include="Units\BabyElephant.cs" />
+    <Compile Include="Units\ScoutCavalry.cs" />
+    <Compile Include="Units\Slinger.cs" />
+    <Compile Include="Units\HandCannoneer.cs" />
+    <Compile Include="Units\Skirmisher.cs" />
+    <Compile Include="Units\Huskarl.cs" />
     <Compile Include="Units\Mangonel.cs" />
     <Compile Include="Units\Archer.cs" />
     <Compile Include="Units\BaseRangedUnit.cs" />
@@ -64,6 +79,8 @@
     <Compile Include="Units\Knight.cs" />
     <Compile Include="Units\BaseUnit.cs" />
     <Compile Include="Units\Spearman.cs" />
+    <Compile Include="Units\EagleScout.cs" />
+    <Compile Include="Units\Villager.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -110,6 +127,71 @@
       <Name>DrawingBase</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\Archer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Spearman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Militia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Knight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Mangonel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Villager.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\EagleScout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Condotierro.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Huskarl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Skirmisher.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CavalryArcher.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HandCannoneer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Slinger.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Genitour.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ScoutCavalry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Camel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BabyElephant.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tarkan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BatteringRam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Scorpion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BombardCannon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\SiegeTower.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

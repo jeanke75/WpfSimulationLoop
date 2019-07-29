@@ -1,11 +1,10 @@
 ﻿using System.Windows;
-using System.Windows.Media;
 
 namespace AoE.Units
 {
     class Knight : BaseUnit
     {
-        public Knight(Vector position, Team team) : base(position, 10f, 30f, "Knight", 100, 10, 0, 1.83f, 2, 2, 1.35f, 4, Colors.LightBlue, team)
+        public Knight(Vector position, Team team) : base(position, 18f, 18f, "Knight", 100, 10, 0, 0f, 1.83f, 2, 2, 1.35f, 4, "Knight.png", team)
         {
             ArmorTypes.Add(ArmorType.Cavalry, 0);
         }
