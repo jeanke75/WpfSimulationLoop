@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
-namespace AoE.Units
+namespace AoE.GameObjects.Units
 {
     abstract class BaseRangedUnit : BaseUnit
     {

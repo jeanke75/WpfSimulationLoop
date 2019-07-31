@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace AoE.Units
+namespace AoE.GameObjects.Units.Infantry
 {
     class Militia : BaseUnit
     {

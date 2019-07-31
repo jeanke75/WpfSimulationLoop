@@ -1,5 +1,10 @@
-﻿using AoE.Units;
+﻿using AoE.GameObjects;
+using AoE.GameObjects.Units;
+using AoE.GameObjects.Units.Archers;
+using AoE.GameObjects.Units.Cavalry;
+using AoE.UI;
 using DrawingBase;
+using DrawingBase.Input;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -20,9 +25,14 @@ namespace AoE
         readonly List<Team> teams = new List<Team>();
         readonly List<BaseUnit> units = new List<BaseUnit>();
 
+        BaseGameObject selectedGameObject = null;
+        private SelectionPanel selectionPanel;
+
         public override void Initialize()
         {
             SetResolution(800, 600);
+
+            selectionPanel = new SelectionPanel(this);
 
             for (uint i = 0; i < 2; i++)
             {
@@ -41,22 +51,52 @@ namespace AoE
 
         public override void Update(float dt)
         {
+            InputHelper.Update();
+
+            if (InputHelper.Mouse.GetState(MouseButton.Left) == ButtonState.Pressed)
+            {
+                selectedGameObject = null;
+                var mousePos = InputHelper.Mouse.GetPosition();
+                foreach (BaseUnit unit in units)
+                {
+                    if (unit.MouseOver(mousePos))
+                    {
+                        selectedGameObject = unit;
+                        break;
+                    }
+                }
+            }
+
             for (int i = units.Count - 1; i >= 0; i--)
             {
                 var unit = units[i];
                 if (unit.HitPoints > 0)
                     unit.Update(dt, units);
                 else
+                {
                     units.Remove(unit);
+                    if (selectedGameObject == unit)
+                        selectedGameObject = null;
+                }
             }
         }
 
         public override void Draw(DrawingContext dc)
         {
+            // Draw units
             foreach (BaseUnit unit in units)
             {
                 unit.Draw(dc, teams);
+
+                // Draw outline if selected
+                if (unit == selectedGameObject)
+                {
+                    dc.DrawRectangle(null, new Pen(Brushes.White, 1), unit.Rect);
+                }
             }
+
+            // Draw UI
+            selectionPanel.Draw(dc, selectedGameObject);
         }
 
         public override void Cleanup()

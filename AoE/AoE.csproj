@@ -56,31 +56,33 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GameObjects\BaseGameObject.cs" />
     <Compile Include="Team.cs" />
-    <Compile Include="Units\BatteringRam.cs" />
-    <Compile Include="Units\BombardCannon.cs" />
-    <Compile Include="Units\SiegeTower.cs" />
-    <Compile Include="Units\Scorpion.cs" />
-    <Compile Include="Units\Tarkan.cs" />
-    <Compile Include="Units\Condotierro.cs" />
-    <Compile Include="Units\CavalryArcher.cs" />
-    <Compile Include="Units\Genitour.cs" />
-    <Compile Include="Units\Camel.cs" />
-    <Compile Include="Units\BabyElephant.cs" />
-    <Compile Include="Units\ScoutCavalry.cs" />
-    <Compile Include="Units\Slinger.cs" />
-    <Compile Include="Units\HandCannoneer.cs" />
-    <Compile Include="Units\Skirmisher.cs" />
-    <Compile Include="Units\Huskarl.cs" />
-    <Compile Include="Units\Mangonel.cs" />
-    <Compile Include="Units\Archer.cs" />
-    <Compile Include="Units\BaseRangedUnit.cs" />
-    <Compile Include="Units\Militia.cs" />
-    <Compile Include="Units\Knight.cs" />
-    <Compile Include="Units\BaseUnit.cs" />
-    <Compile Include="Units\Spearman.cs" />
-    <Compile Include="Units\EagleScout.cs" />
-    <Compile Include="Units\Villager.cs" />
+    <Compile Include="GameObjects\Units\Siege\BatteringRam.cs" />
+    <Compile Include="GameObjects\Units\Siege\BombardCannon.cs" />
+    <Compile Include="GameObjects\Units\Siege\SiegeTower.cs" />
+    <Compile Include="GameObjects\Units\Siege\Scorpion.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\Tarkan.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Condotierro.cs" />
+    <Compile Include="GameObjects\Units\Archers\CavalryArcher.cs" />
+    <Compile Include="GameObjects\Units\Archers\Genitour.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\Camel.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\BattleElephant.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\ScoutCavalry.cs" />
+    <Compile Include="GameObjects\Units\Archers\Slinger.cs" />
+    <Compile Include="GameObjects\Units\Archers\HandCannoneer.cs" />
+    <Compile Include="GameObjects\Units\Archers\Skirmisher.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Huskarl.cs" />
+    <Compile Include="GameObjects\Units\Siege\Mangonel.cs" />
+    <Compile Include="GameObjects\Units\Archers\Archer.cs" />
+    <Compile Include="GameObjects\Units\BaseRangedUnit.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Militia.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\Knight.cs" />
+    <Compile Include="GameObjects\Units\BaseUnit.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Spearman.cs" />
+    <Compile Include="GameObjects\Units\Infantry\EagleScout.cs" />
+    <Compile Include="GameObjects\Units\Civilian\Villager.cs" />
+    <Compile Include="UI\SelectionPanel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -176,7 +178,7 @@
     <Resource Include="Images\Camel.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\BabyElephant.png" />
+    <Resource Include="Images\BattleElephant.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Tarkan.png" />
@@ -193,5 +195,6 @@
   <ItemGroup>
     <Resource Include="Images\SiegeTower.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

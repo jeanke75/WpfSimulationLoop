@@ -1,12 +1,10 @@
 ﻿using DrawingBase;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
-namespace AoE
+namespace AoE.GameObjects.Units
 {
     enum ArmorType
     {
@@ -33,13 +31,8 @@ namespace AoE
         WarElephant
     }
 
-    abstract class BaseUnit
+    abstract class BaseUnit : BaseGameObject
     {
-        public Vector Position { get; private set; }
-        public readonly float Width;
-        public readonly float Height;
-        public readonly float Radius;
-        public readonly string Name;
         public readonly int HitPointsMax;
         private int _HitPoints;
         public int HitPoints
@@ -71,17 +64,10 @@ namespace AoE
         public readonly int LineOfSight;
         public BaseUnit Target { get; set; }
 
-        private readonly ImageSource imageSource;
-
         public Team Team { get; set; }
 
-        public BaseUnit(Vector position, float width, float height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team team)
+        public BaseUnit(Vector position, float width, float height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team team) : base(position, width, height, name, imageId)
         {
-            Position = position;
-            Width = width;
-            Height = height;
-            Radius = width < height ? width / 2f : height / 2f;
-            Name = name;
             HitPointsMax = hitPoints >= 1 ? hitPoints : 1;
             HitPoints = HitPointsMax;
             MeleeAttack = meleeAttack >= 0 ? meleeAttack : 0;
@@ -95,8 +81,6 @@ namespace AoE
             ArmorTypes = new Dictionary<ArmorType, int>();
             Speed = speed >= 0 ? speed : 0;
             LineOfSight = lineOfSight >= 1 ? lineOfSight : 1;
-
-            imageSource = GetImageSource(imageId);
 
             Team = team;
         }
@@ -139,12 +123,14 @@ namespace AoE
             }
         }
 
-        public virtual void Draw(DrawingContext dc, List<Team> teams)
+        public override void Draw(DrawingContext dc, List<Team> teams)
         {
-            var unitRect = new Rect(Position.X - Width / 2f, Position.Y - Height / 2f, Width, Height);
-            var teamColor = teams.Where(x => x.Id == Team.Id).Single().Color;
-            // Draw character (TODO draw teamcolor again)
-            dc.DrawImage(imageSource, unitRect);
+            base.Draw(dc, teams);
+
+            var unitRect = Rect;
+            // TODO draw team color
+            //var teamColor = teams.Where(x => x.Id == Team.Id).Single().Color;
+
             //dc.DrawEllipse(null, new Pen(Brushes.White, 1), new Point(Position.X, Position.Y), Radius, Radius);
 
             // Draw blast radius
@@ -160,11 +146,6 @@ namespace AoE
 
             // Draw time untill next attack
             dc.DrawRectangle(Brushes.SandyBrown, null, new Rect(unitRect.X, unitRect.Y - 5, TimeUntillAttack / RateOfFire * Width, 5));
-        }
-
-        private ImageSource GetImageSource(string imageId)
-        {
-            return BitmapDecoder.Create(new Uri("pack://application:,,,/Images/" + imageId), BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames.First();
         }
 
         private BaseUnit GetClosestUnitInLineOfSight(List<BaseUnit> units)
