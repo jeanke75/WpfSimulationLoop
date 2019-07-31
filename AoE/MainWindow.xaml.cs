@@ -45,7 +45,7 @@ namespace AoE
             }
             for (int i = 0; i < 1; i++)
             {
-                units.Add(new Archer(new Vector((random.NextDouble() + 7) * tilesize, 200 + i * 30), teams[1]));
+                units.Add(new Archer(new Vector((random.NextDouble() + 12) * tilesize, 200 + i * 30), teams[1]));
             }
         }
 
@@ -65,6 +65,21 @@ namespace AoE
                         break;
                     }
                 }
+            }
+            else if (InputHelper.Mouse.GetState(MouseButton.Right) == ButtonState.Pressed && selectedGameObject is BaseUnit selectedBaseUnit)
+            {
+                BaseUnit targetGameObject = null;
+                var mousePos = InputHelper.Mouse.GetPosition();
+                foreach (BaseUnit unit in units)
+                {
+                    if (unit.MouseOver(mousePos))
+                    {
+                        targetGameObject = unit;
+                        break;
+                    }
+                }
+
+                selectedBaseUnit.Target = targetGameObject;
             }
 
             for (int i = units.Count - 1; i >= 0; i--)
