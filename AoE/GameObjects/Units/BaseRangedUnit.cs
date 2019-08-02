@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DrawingBase;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
@@ -35,11 +36,18 @@ namespace AoE.GameObjects.Units
 
         public override void Draw(DrawingContext dc, List<Team> teams)
         {
-            base.Draw(dc, teams);
+            base.Draw(dc, teams); 
 
             // Draw attack range
             if (MainWindow.ShowAttackRange)
-                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Position.X, Position.Y), MaxRange * MainWindow.tilesize, MaxRange * MainWindow.tilesize);
+            {
+                // min range
+                if (MinRange > 0)
+                    dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Position.X, Position.Y), Radius + MinRange * MainWindow.tilesize, Radius + MinRange * MainWindow.tilesize);
+
+                // max range
+                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Position.X, Position.Y), Radius + MaxRange * MainWindow.tilesize, Radius + MaxRange * MainWindow.tilesize);
+            } 
 
             // Draw projectile
         }
@@ -58,9 +66,24 @@ namespace AoE.GameObjects.Units
             }
         }
 
-        protected override void MoveTowardsPosition(float dt, Vector position)
+        protected override void MoveTowardsAttackRange(float dt)
         {
-            base.MoveTowardsPosition(dt, position);
+            var distance = DistanceToUnit(Target);
+            if (distance > MaxRange * MainWindow.tilesize)
+            {
+                base.MoveTowardsPosition(dt, Target.Position);
+            }
+            else if (distance < MinRange * MainWindow.tilesize)
+            {
+                // If the target of this unit is not targetting this unit, move away from the target to attack it
+                if (Target.Target != this)
+                {
+                    var direction = Target.Position - Position;
+                    direction.SetMagnitude(MinRange * MainWindow.tilesize + Target.Radius + Radius);
+                    var newPosition = Position - direction;
+                    MoveTowardsPosition(dt, newPosition);
+                }
+            }
         }
     }
 }

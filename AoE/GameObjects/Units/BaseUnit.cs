@@ -112,7 +112,7 @@ namespace AoE.GameObjects.Units
                         }
                         else
                         {
-                            MoveTowardsPosition(dt, Target.Position);
+                            MoveTowardsAttackRange(dt);
                         }
                     }
                     else
@@ -131,7 +131,7 @@ namespace AoE.GameObjects.Units
             // TODO draw team color
             //var teamColor = teams.Where(x => x.Id == Team.Id).Single().Color;
 
-            //dc.DrawEllipse(null, new Pen(Brushes.White, 1), new Point(Position.X, Position.Y), Radius, Radius);
+            dc.DrawEllipse(null, new Pen(Brushes.White, 1), new Point(Position.X, Position.Y), Radius, Radius);
 
             // Draw blast radius
             if (MainWindow.ShowAttackRange && Target != null && BlastRadius > 0)
@@ -139,7 +139,7 @@ namespace AoE.GameObjects.Units
 
             // Draw line of sight
             if (MainWindow.ShowLineOfSight)
-                dc.DrawEllipse(null, new Pen(Brushes.Yellow, 1), new Point(Position.X, Position.Y), LineOfSight * MainWindow.tilesize, LineOfSight * MainWindow.tilesize);
+                dc.DrawEllipse(null, new Pen(Brushes.Yellow, 1), new Point(Position.X, Position.Y), Radius + LineOfSight * MainWindow.tilesize, Radius + LineOfSight * MainWindow.tilesize);
 
             // Draw health
             dc.DrawRectangle(Brushes.Red, null, new Rect(unitRect.X, unitRect.Y - 10, HitPoints / (float)HitPointsMax * Width, 5));
@@ -156,7 +156,7 @@ namespace AoE.GameObjects.Units
             {
                 if (unit.Team.Id == Team.Id || unit.HitPoints == 0) continue;
                 var distance = DistanceToUnit(unit) / MainWindow.tilesize;
-                if (distance <= LineOfSight && distance < distanceToClosest)
+                if (distance <= LineOfSight + Radius && distance < distanceToClosest)
                 {
                     distanceToClosest = distance;
                     closestUnit = unit;
@@ -218,6 +218,11 @@ namespace AoE.GameObjects.Units
             }
 
             return unitsInBlast;
+        }
+
+        protected virtual void MoveTowardsAttackRange(float dt)
+        {
+            MoveTowardsPosition(dt, Target.Position);
         }
 
         protected virtual void MoveTowardsPosition(float dt, Vector position)

@@ -45,7 +45,7 @@ namespace AoE
             }
             for (int i = 0; i < 1; i++)
             {
-                units.Add(new Archer(new Vector((random.NextDouble() + 12) * tilesize, 200 + i * 30), teams[1]));
+                units.Add(new Genitour(new Vector((random.NextDouble() + 7) * tilesize, 200 + i * 30), teams[1]));
             }
         }
 
