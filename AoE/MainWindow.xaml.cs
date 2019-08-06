@@ -22,6 +22,7 @@ namespace AoE
         public static readonly bool ShowLineOfSight = true;
         public static readonly bool ShowAttackRange = true;
         public static readonly bool ShowTimeUntillAttack = true;
+        public static readonly bool ShowGameObjectRadius = false;
         readonly List<Team> teams = new List<Team>();
         readonly List<BaseUnit> units = new List<BaseUnit>();
 

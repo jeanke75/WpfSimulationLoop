@@ -64,6 +64,10 @@ namespace AoE.GameObjects
         {
             // Draw gameobject
             dc.DrawImage(imageSource, Rect);
+
+            // Draw radius
+            if (MainWindow.ShowGameObjectRadius)
+                dc.DrawEllipse(null, new Pen(Brushes.White, 1), new Point(Position.X, Position.Y), Radius, Radius);
         }
 
         private ImageSource GetImageSource(string imageId)

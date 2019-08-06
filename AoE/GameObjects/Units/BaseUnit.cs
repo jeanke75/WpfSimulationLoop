@@ -1,6 +1,7 @@
 ﻿using DrawingBase;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -104,9 +105,8 @@ namespace AoE.GameObjects.Units
 
             var unitRect = Rect;
             // TODO draw team color
-            //var teamColor = teams.Where(x => x.Id == Team.Id).Single().Color;
-
-            dc.DrawEllipse(null, new Pen(Brushes.White, 1), new Point(Position.X, Position.Y), Radius, Radius);
+            var teamColor = teams.Where(x => x.Id == Team.Id).Single().Color;
+            dc.DrawRectangle(null, new Pen(new SolidColorBrush(teamColor), 1), new Rect(unitRect.X, unitRect.Y - 10, HitPoints / (float)HitPointsMax * Width, 5));
 
             // Draw blast radius
             if (MainWindow.ShowAttackRange && Target != null && BlastRadius > 0)
