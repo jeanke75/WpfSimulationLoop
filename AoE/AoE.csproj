@@ -57,6 +57,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="GameObjects\BaseGameObject.cs" />
+    <Compile Include="GameObjects\ISelectable.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="GameObjects\Units\Siege\BatteringRam.cs" />
     <Compile Include="GameObjects\Units\Siege\BombardCannon.cs" />

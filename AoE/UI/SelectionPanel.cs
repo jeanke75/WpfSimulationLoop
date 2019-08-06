@@ -31,13 +31,13 @@ namespace AoE.UI
             pixelsPerDip = VisualTreeHelper.GetDpi(window).PixelsPerDip;
         }
 
-        public void Draw(DrawingContext dc, BaseGameObject selectedObject)
+        public void Draw(DrawingContext dc, ISelectable selectable)
         {
             // Draw panel background
             dc.DrawRectangle(Brushes.SandyBrown, null, rect);
 
             // Draw selected unit info
-            if (selectedObject != null)
+            if (selectable is BaseGameObject selectedObject)
             {
                 var xOffset = 8d;
                 var yOffset = 8d;
@@ -45,7 +45,6 @@ namespace AoE.UI
                 // Draw info
                 var nameText = new FormattedText(selectedObject.Name, cultureInfo, flowDirection, typeface, 12d, foregroundBrush, pixelsPerDip);
                 dc.DrawText(nameText, new Point(rect.X + xOffset, rect.Y + yOffset));
-
 
                 yOffset += nameText.Height;
 

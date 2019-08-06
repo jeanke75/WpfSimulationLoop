@@ -25,7 +25,7 @@ namespace AoE
         readonly List<Team> teams = new List<Team>();
         readonly List<BaseUnit> units = new List<BaseUnit>();
 
-        BaseGameObject selectedGameObject = null;
+        ISelectable selectedGameObject = null;
         private SelectionPanel selectionPanel;
 
         public override void Initialize()
@@ -59,9 +59,9 @@ namespace AoE
                 var mousePos = InputHelper.Mouse.GetPosition();
                 foreach (BaseUnit unit in units)
                 {
-                    if (unit.MouseOver(mousePos))
+                    if (unit is ISelectable selectableUnit && unit.MouseOver(mousePos))
                     {
-                        selectedGameObject = unit;
+                        selectedGameObject = selectableUnit;
                         break;
                     }
                 }

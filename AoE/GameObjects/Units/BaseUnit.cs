@@ -6,32 +6,7 @@ using System.Windows.Media;
 
 namespace AoE.GameObjects.Units
 {
-    enum ArmorType
-    {
-        None,
-        Archer,
-        Building,
-        Camel,
-        Castle,
-        CavalryArcher,
-        Cavalry,
-        Condotierro,
-        EagleWarrior,
-        GunpowderUnit,
-        Infantry,
-        Monk,
-        Ram,
-        Ship,
-        SiegeWeapon,
-        StandardBuilding,
-        StoneDefense,
-        Spearman,
-        UniqueUnit,
-        WallAndGate,
-        WarElephant
-    }
-
-    abstract class BaseUnit : BaseGameObject
+    abstract class BaseUnit : BaseGameObject, ISelectable
     {
         public readonly int HitPointsMax;
         private int _HitPoints;
@@ -66,7 +41,7 @@ namespace AoE.GameObjects.Units
 
         public Team Team { get; set; }
 
-        public BaseUnit(Vector position, float width, float height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team team) : base(position, width, height, name, imageId)
+        public BaseUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team team) : base(position, width, height, name, imageId)
         {
             HitPointsMax = hitPoints >= 1 ? hitPoints : 1;
             HitPoints = HitPointsMax;

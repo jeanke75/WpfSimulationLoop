@@ -7,12 +7,37 @@ using System.Windows.Media.Imaging;
 
 namespace AoE.GameObjects
 {
+    enum ArmorType
+    {
+        None,
+        Archer,
+        Building,
+        Camel,
+        Castle,
+        CavalryArcher,
+        Cavalry,
+        Condotierro,
+        EagleWarrior,
+        GunpowderUnit,
+        Infantry,
+        Monk,
+        Ram,
+        Ship,
+        SiegeWeapon,
+        StandardBuilding,
+        StoneDefense,
+        Spearman,
+        UniqueUnit,
+        WallAndGate,
+        WarElephant
+    }
+
     abstract class BaseGameObject
     {
         public Vector Position { get; protected set; }
-        public readonly float Width;
-        public readonly float Height;
-        public readonly float Radius;
+        public readonly double Width;
+        public readonly double Height;
+        public readonly double Radius;
         public Rect Rect
         {
             get
@@ -24,7 +49,7 @@ namespace AoE.GameObjects
 
         private readonly ImageSource imageSource;
 
-        public BaseGameObject(Vector position, float width, float height, string name, string imageId)
+        public BaseGameObject(Vector position, double width, double height, string name, string imageId)
         {
             Position = position;
             Width = width;
