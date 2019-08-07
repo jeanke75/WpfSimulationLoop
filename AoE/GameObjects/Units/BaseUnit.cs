@@ -104,9 +104,14 @@ namespace AoE.GameObjects.Units
             base.Draw(dc, teams);
 
             var unitRect = Rect;
-            // TODO draw team color
+
+            // Draw team color
             var teamColor = teams.Where(x => x.Id == Team.Id).Single().Color;
-            dc.DrawRectangle(null, new Pen(new SolidColorBrush(teamColor), 1), new Rect(unitRect.X, unitRect.Y - 10, HitPoints / (float)HitPointsMax * Width, 5));
+            dc.PushTransform(new TranslateTransform(unitRect.X + Width / 2, unitRect.Y - 15));
+            dc.PushTransform(new RotateTransform(60));
+            dc.DrawEquilateralTriangle(new SolidColorBrush(teamColor), null, 8, true);
+            dc.Pop();
+            dc.Pop();
 
             // Draw blast radius
             if (MainWindow.ShowAttackRange && Target != null && BlastRadius > 0)
