@@ -56,6 +56,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Actions\Attack.cs" />
+    <Compile Include="Actions\BaseAction.cs" />
+    <Compile Include="Actions\Move.cs" />
     <Compile Include="GameObjects\BaseGameObject.cs" />
     <Compile Include="GameObjects\ISelectable.cs" />
     <Compile Include="Team.cs" />

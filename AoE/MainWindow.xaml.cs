@@ -1,4 +1,5 @@
-﻿using AoE.GameObjects;
+﻿using AoE.Actions;
+using AoE.GameObjects;
 using AoE.GameObjects.Units;
 using AoE.GameObjects.Units.Archers;
 using AoE.GameObjects.Units.Cavalry;
@@ -80,7 +81,20 @@ namespace AoE
                     }
                 }
 
-                selectedBaseUnit.Target = targetGameObject;
+                if (targetGameObject != null)
+                {
+                    if (targetGameObject != selectedBaseUnit)
+                    {
+                        if (targetGameObject.Team != selectedBaseUnit.Team)
+                        {
+                            selectedBaseUnit.action = new Attack(selectedBaseUnit, targetGameObject, units);
+                        }
+                    }
+                }
+                else
+                {
+                    selectedBaseUnit.action = new Move(selectedBaseUnit, new Vector(mousePos.X, mousePos.Y));
+                }
             }
 
             for (int i = units.Count - 1; i >= 0; i--)

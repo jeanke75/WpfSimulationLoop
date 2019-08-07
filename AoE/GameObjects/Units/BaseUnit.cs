@@ -1,4 +1,5 @@
-﻿using DrawingBase;
+﻿using AoE.Actions;
+using DrawingBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,13 +33,25 @@ namespace AoE.GameObjects.Units
         public readonly Dictionary<ArmorType, int> AttackBonuses;
         public readonly float BlastRadius;
         public readonly float RateOfFire;
-        protected float TimeUntillAttack { get; set; }
+        private float _TimeUntillAttack;
+        public float TimeUntillAttack
+        {
+            get
+            {
+                return _TimeUntillAttack;
+            }
+            set
+            {
+                _TimeUntillAttack = value >= 0 ? value : 0;
+            }
+        }
         public readonly int MeleeArmor;
         public readonly int PierceArmor;
         public readonly Dictionary<ArmorType, int> ArmorTypes;
         public readonly float Speed;
         public readonly int LineOfSight;
-        public BaseUnit Target { get; set; }
+
+        public BaseAction action;
 
         public Team Team { get; set; }
 
@@ -68,32 +81,24 @@ namespace AoE.GameObjects.Units
                 TimeUntillAttack -= dt;
                 if (TimeUntillAttack < 0)
                     TimeUntillAttack = 0;
-
-                Target = Target ?? GetClosestUnitInLineOfSight(units);
-
-                if (Target != null)
+                
+                if (action != null)
                 {
-                    if (Target.HitPoints > 0)
+                    if (!action.Completed())
                     {
-                        if (UnitInRange(Target))
-                        {
-                            if (TimeUntillAttack == 0)
-                            {
-                                if (BlastRadius > 0)
-                                    DealBlastDamage(Target, units);
-                                else
-                                    DealDamage(Target);
-                                TimeUntillAttack = RateOfFire;
-                            }
-                        }
-                        else
-                        {
-                            MoveTowardsAttackRange(dt);
-                        }
+                        action.Do(dt);
                     }
                     else
                     {
-                        Target = null;
+                        action = null;
+                    }
+                }
+                else
+                {
+                    var enemyUnit = GetClosestUnitInLineOfSight(units);
+                    if (enemyUnit != null)
+                    {
+                        action = new Attack(this, enemyUnit, units);
                     }
                 }
             }
@@ -114,8 +119,8 @@ namespace AoE.GameObjects.Units
             dc.Pop();
 
             // Draw blast radius
-            if (MainWindow.ShowAttackRange && Target != null && BlastRadius > 0)
-                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Target.Position.X, Target.Position.Y), BlastRadius * MainWindow.tilesize, BlastRadius * MainWindow.tilesize);
+            if (MainWindow.ShowAttackRange && action is Attack attackAction && attackAction.Target != null && BlastRadius > 0)
+                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(attackAction.Target.Position.X, attackAction.Target.Position.Y), BlastRadius * MainWindow.tilesize, BlastRadius * MainWindow.tilesize);
 
             // Draw line of sight
             if (MainWindow.ShowLineOfSight)
@@ -148,61 +153,14 @@ namespace AoE.GameObjects.Units
         /*
          * Value < 0: Units are overlapping
          */
-        protected double DistanceToUnit(BaseUnit other)
+        public double DistanceToUnit(BaseUnit other)
         {
             return Math.Sqrt(Math.Pow(other.Position.X - Position.X, 2) + Math.Pow(other.Position.Y - Position.Y, 2)) - (other.Radius + Radius);
         }
 
-        protected virtual bool UnitInRange(BaseUnit other)
+        public virtual bool UnitInRange(BaseUnit other)
         {
             return DistanceToUnit(other) <= 0.1f * MainWindow.tilesize;
-        }
-
-        protected virtual void DealDamage(BaseUnit target)
-        {
-            var meleeDamage = Math.Max(0, MeleeAttack - target.MeleeArmor);
-            var pierceDamage = Math.Max(0, PierceAttack - target.PierceArmor);
-            var bonusDamage = 0;
-            foreach (KeyValuePair<ArmorType, int> bonusResist in target.ArmorTypes)
-            {
-               if (AttackBonuses.TryGetValue(bonusResist.Key, out int attackBonus))
-                {
-                    bonusDamage += Math.Max(0, attackBonus - bonusResist.Value);
-                }
-            }
-
-            target.HitPoints -= Math.Max(1, meleeDamage + pierceDamage + bonusDamage);
-            if (target.Target == null)
-                target.Target = this;
-        }
-
-        protected void DealBlastDamage(BaseUnit target, List<BaseUnit> units)
-        {
-            var unitsInBlast = GetUnitsInBlastRadius(target.Position, units);
-            foreach (BaseUnit unit in unitsInBlast)
-            {
-                DealDamage(unit);
-            }
-        }
-
-        private List<BaseUnit> GetUnitsInBlastRadius(Vector centerOfBlast, List<BaseUnit> units)
-        {
-            List<BaseUnit> unitsInBlast = new List<BaseUnit>();
-            foreach (BaseUnit unit in units)
-            {
-                var distanceToCenter = Math.Sqrt(Math.Pow(unit.Position.X - centerOfBlast.X, 2) + Math.Pow(unit.Position.Y - centerOfBlast.Y, 2));
-                if (distanceToCenter <= BlastRadius * MainWindow.tilesize)
-                {
-                    unitsInBlast.Add(unit);
-                }
-            }
-
-            return unitsInBlast;
-        }
-
-        protected virtual void MoveTowardsAttackRange(float dt)
-        {
-            MoveTowardsPosition(dt, Target.Position);
         }
 
         protected virtual void MoveTowardsPosition(float dt, Vector position)

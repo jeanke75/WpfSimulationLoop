@@ -34,7 +34,7 @@ namespace AoE.GameObjects
 
     abstract class BaseGameObject
     {
-        public Vector Position { get; protected set; }
+        public Vector Position { get; set; }
         public readonly double Width;
         public readonly double Height;
         public readonly double Radius;

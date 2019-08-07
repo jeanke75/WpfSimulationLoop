@@ -1,5 +1,4 @@
-﻿using DrawingBase;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
@@ -52,38 +51,10 @@ namespace AoE.GameObjects.Units
             // Draw projectile
         }
 
-        protected override bool UnitInRange(BaseUnit other)
+        public override bool UnitInRange(BaseUnit other)
         {
             var distance = DistanceToUnit(other);
             return distance >= MinRange * MainWindow.tilesize && distance <= MaxRange * MainWindow.tilesize;
-        }
-
-        protected override void DealDamage(BaseUnit target)
-        {
-            if (MainWindow.random.NextDouble() <= Accuracy)
-            {
-                base.DealDamage(target);
-            }
-        }
-
-        protected override void MoveTowardsAttackRange(float dt)
-        {
-            var distance = DistanceToUnit(Target);
-            if (distance > MaxRange * MainWindow.tilesize)
-            {
-                base.MoveTowardsPosition(dt, Target.Position);
-            }
-            else if (distance < MinRange * MainWindow.tilesize)
-            {
-                // If the target of this unit is not targetting this unit, move away from the target to attack it
-                if (Target.Target != this)
-                {
-                    var direction = Target.Position - Position;
-                    direction.SetMagnitude(MinRange * MainWindow.tilesize + Target.Radius + Radius);
-                    var newPosition = Position - direction;
-                    MoveTowardsPosition(dt, newPosition);
-                }
-            }
         }
     }
 }
