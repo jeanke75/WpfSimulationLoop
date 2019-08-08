@@ -14,8 +14,8 @@ namespace AoE.GameObjects.Units
         
         // TODO list of projectiles
 
-        public BaseRangedUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int minRange, int maxRange, float accuracy, float projectileSpeed, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team team) :
-            base(position, width, height, name, hitPoints, meleeAttack, pierceAttack, blastRadius, rateOfFire, meleeArmor, pierceArmor, speed, lineOfSight, imageId, team)
+        public BaseRangedUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int minRange, int maxRange, float accuracy, float projectileSpeed, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team owner) :
+            base(position, width, height, name, hitPoints, meleeAttack, pierceAttack, blastRadius, rateOfFire, meleeArmor, pierceArmor, speed, lineOfSight, imageId, owner)
         {
             MinRange = minRange >= 0 ? minRange : 0;
             if (maxRange >= minRange)
@@ -53,7 +53,7 @@ namespace AoE.GameObjects.Units
 
         public override bool UnitInRange(BaseUnit other)
         {
-            var distance = DistanceToUnit(other);
+            var distance = Distance(other);
             return distance >= MinRange * MainWindow.tilesize && distance <= MaxRange * MainWindow.tilesize;
         }
     }

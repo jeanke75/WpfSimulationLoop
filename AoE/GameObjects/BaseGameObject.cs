@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -60,7 +59,7 @@ namespace AoE.GameObjects
             imageSource = GetImageSource(imageId);
         }
 
-        public virtual void Draw(DrawingContext dc, List<Team> teams)
+        public virtual void Draw(DrawingContext dc)
         {
             // Draw gameobject
             dc.DrawImage(imageSource, Rect);
@@ -73,6 +72,14 @@ namespace AoE.GameObjects
         private ImageSource GetImageSource(string imageId)
         {
             return BitmapDecoder.Create(new Uri("pack://application:,,,/Images/" + imageId), BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames.First();
+        }
+
+        /*
+         * Value < 0: Units are overlapping
+         */
+        public double Distance(BaseGameObject other)
+        {
+            return Math.Sqrt(Math.Pow(other.Position.X - Position.X, 2) + Math.Pow(other.Position.Y - Position.Y, 2)) - (other.Radius + Radius);
         }
 
         public bool MouseOver(Point mousePos)

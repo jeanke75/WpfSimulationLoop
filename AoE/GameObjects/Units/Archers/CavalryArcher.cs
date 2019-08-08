@@ -4,7 +4,7 @@ namespace AoE.GameObjects.Units.Archers
 {
     class CavalryArcher : BaseRangedUnit
     {
-        public CavalryArcher(Vector position, Team team) : base(position, 18f, 18f, "Cavalry Archer", 50, 0, 6, 0f, 2.03f, 0, 4, 0.5f, 7f, 0, 0, 1.4f, 5, "CavalryArcher.png", team)
+        public CavalryArcher(Vector position, Team owner) : base(position, 18f, 18f, "Cavalry Archer", 50, 0, 6, 0f, 2.03f, 0, 4, 0.5f, 7f, 0, 0, 1.4f, 5, "CavalryArcher.png", owner)
         {
             AttackBonuses.Add(ArmorType.Spearman, 2);
             ArmorTypes.Add(ArmorType.Archer, 0);

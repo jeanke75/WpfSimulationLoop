@@ -1,8 +1,12 @@
 ﻿using AoE.Actions;
 using AoE.GameObjects;
+using AoE.GameObjects.Buildings;
+using AoE.GameObjects.Buildings.Storage;
+using AoE.GameObjects.Resources;
 using AoE.GameObjects.Units;
 using AoE.GameObjects.Units.Archers;
 using AoE.GameObjects.Units.Cavalry;
+using AoE.GameObjects.Units.Civilian;
 using AoE.UI;
 using DrawingBase;
 using DrawingBase.Input;
@@ -26,6 +30,8 @@ namespace AoE
         public static readonly bool ShowGameObjectRadius = false;
         readonly List<Team> teams = new List<Team>();
         readonly List<BaseUnit> units = new List<BaseUnit>();
+        readonly List<BaseResource> resources = new List<BaseResource>();
+        readonly List<BaseBuilding> buildings = new List<BaseBuilding>();
 
         ISelectable selectedGameObject = null;
         private SelectionPanel selectionPanel;
@@ -41,13 +47,26 @@ namespace AoE
                 teams.Add(new Team(i, Color.FromRgb((byte)random.Next(50, 255), (byte)random.Next(50, 255), (byte)random.Next(50, 255))));
             }
 
-            for (int i = 0; i < 1; i++)
+            // Add resources to the map
+            resources.Add(new Rocks(new Vector(100, 4)));
+            resources.Add(new Rocks(new Vector(116, 4)));
+            resources.Add(new Tree(new Vector(132, 4)));
+            resources.Add(new Tree(new Vector(148, 4)));
+            resources.Add(new GoldOre(new Vector(164, 4)));
+            resources.Add(new GoldOre(new Vector(180, 4)));
+
+            buildings.Add(new LumberCamp(10, 10, teams[0]));
+            buildings.Add(new MiningCamp(12, 10, teams[0]));
+            buildings.Add(new Mill(14, 10, teams[0]));
+
+            for (int i = 0; i < 2; i++)
             {
-                units.Add(new Knight(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), teams[0]));
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                units.Add(new Genitour(new Vector((random.NextDouble() + 7) * tilesize, 200 + i * 30), teams[1]));
+                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), teams[0]));
+                units[i * 3].action = new Gather(units[i * 3], resources[0], resources, buildings);
+                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), teams[0]));
+                units[i * 3 + 1].action = new Gather(units[i * 3 + 1], resources[2], resources, buildings);
+                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), teams[0]));
+                units[i * 3 + 2].action = new Gather(units[i * 3 + 2], resources[4], resources, buildings);
             }
         }
 
@@ -59,41 +78,60 @@ namespace AoE
             {
                 selectedGameObject = null;
                 var mousePos = InputHelper.Mouse.GetPosition();
-                foreach (BaseUnit unit in units)
+                foreach (BaseGameObject gameObject in GetAllGameObjects())
                 {
-                    if (unit is ISelectable selectableUnit && unit.MouseOver(mousePos))
+                    if (gameObject is ISelectable selectableUnit && gameObject.MouseOver(mousePos))
                     {
                         selectedGameObject = selectableUnit;
                         break;
                     }
                 }
             }
-            else if (InputHelper.Mouse.GetState(MouseButton.Right) == ButtonState.Pressed && selectedGameObject is BaseUnit selectedBaseUnit)
+            else if (InputHelper.Mouse.GetState(MouseButton.Right) == ButtonState.Pressed)
             {
-                BaseUnit targetGameObject = null;
-                var mousePos = InputHelper.Mouse.GetPosition();
-                foreach (BaseUnit unit in units)
+                if (selectedGameObject is BaseUnit selectedBaseUnit)
                 {
-                    if (unit.MouseOver(mousePos))
+                    BaseGameObject targetGameObject = null;
+                    var mousePos = InputHelper.Mouse.GetPosition();
+                    foreach (BaseGameObject gameObject in GetAllGameObjects())
                     {
-                        targetGameObject = unit;
-                        break;
-                    }
-                }
-
-                if (targetGameObject != null)
-                {
-                    if (targetGameObject != selectedBaseUnit)
-                    {
-                        if (targetGameObject.Team != selectedBaseUnit.Team)
+                        if (gameObject is ISelectable && gameObject.MouseOver(mousePos))
                         {
-                            selectedBaseUnit.action = new Attack(selectedBaseUnit, targetGameObject, units);
+                            targetGameObject = gameObject;
+                            break;
                         }
                     }
+
+                    if (targetGameObject is BaseUnit targetBaseUnit)
+                    {
+                        if (targetBaseUnit != selectedBaseUnit)
+                        {
+                            if (targetBaseUnit.GetOwner() != selectedBaseUnit.GetOwner())
+                            {
+                                selectedBaseUnit.action = new Attack(selectedBaseUnit, targetBaseUnit, units);
+                            }
+                        }
+                    }
+                    else if (targetGameObject is BaseResource targetBaseResource)
+                    {
+                        if (selectedBaseUnit is Villager)
+                            selectedBaseUnit.action = new Gather(selectedBaseUnit, targetBaseResource, resources, buildings);
+                    }
+                    else
+                    {
+                        selectedBaseUnit.action = new Move(selectedBaseUnit, new Vector(mousePos.X, mousePos.Y));
+                    }
                 }
-                else
+            }
+
+            for (int i = resources.Count - 1; i >= 0; i--)
+            {
+                var resource = resources[i];
+                if (resource.Amount == 0)
                 {
-                    selectedBaseUnit.action = new Move(selectedBaseUnit, new Vector(mousePos.X, mousePos.Y));
+                    resources.Remove(resource);
+                    if (selectedGameObject == resource)
+                        selectedGameObject = null;
                 }
             }
 
@@ -113,6 +151,30 @@ namespace AoE
 
         public override void Draw(DrawingContext dc)
         {
+            // Draw resources
+            foreach (BaseResource resource in resources)
+            {
+                resource.Draw(dc);
+
+                // Draw outline if selected
+                if (resource == selectedGameObject)
+                {
+                    dc.DrawRectangle(null, new Pen(Brushes.White, 1), resource.Rect);
+                }
+            }
+
+            // Draw buildings
+            foreach (BaseBuilding building in buildings)
+            {
+                building.Draw(dc);
+
+                // Draw outline if selected
+                if (building == selectedGameObject)
+                {
+                    dc.DrawRectangle(null, new Pen(Brushes.White, 1), building.Rect);
+                }
+            }
+
             // Draw units
             foreach (BaseUnit unit in units)
             {
@@ -131,6 +193,15 @@ namespace AoE
 
         public override void Cleanup()
         {
+        }
+
+        private List<BaseGameObject> GetAllGameObjects()
+        {
+            var allGameObjects = new List<BaseGameObject>();
+            allGameObjects.AddRange(units);
+            allGameObjects.AddRange(resources);
+            allGameObjects.AddRange(buildings);
+            return allGameObjects;
         }
     }
 }

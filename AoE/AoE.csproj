@@ -58,9 +58,20 @@
     </ApplicationDefinition>
     <Compile Include="Actions\Attack.cs" />
     <Compile Include="Actions\BaseAction.cs" />
+    <Compile Include="Actions\Gather.cs" />
     <Compile Include="Actions\Move.cs" />
     <Compile Include="GameObjects\BaseGameObject.cs" />
+    <Compile Include="GameObjects\Buildings\BaseBuilding.cs" />
+    <Compile Include="GameObjects\Buildings\Storage\Mill.cs" />
+    <Compile Include="GameObjects\Buildings\Storage\MiningCamp.cs" />
+    <Compile Include="GameObjects\Buildings\Storage\LumberCamp.cs" />
+    <Compile Include="GameObjects\IOwnable.cs" />
     <Compile Include="GameObjects\ISelectable.cs" />
+    <Compile Include="GameObjects\Buildings\IStorage.cs" />
+    <Compile Include="GameObjects\Resources\BaseResource.cs" />
+    <Compile Include="GameObjects\Resources\GoldOre.cs" />
+    <Compile Include="GameObjects\Resources\Rocks.cs" />
+    <Compile Include="GameObjects\Resources\Tree.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="GameObjects\Units\Siege\BatteringRam.cs" />
     <Compile Include="GameObjects\Units\Siege\BombardCannon.cs" />
@@ -134,71 +145,84 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Archer.png" />
+    <Resource Include="Images\Units\Archer.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Spearman.png" />
+    <Resource Include="Images\Units\Spearman.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Militia.png" />
+    <Resource Include="Images\Units\Militia.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Knight.png" />
+    <Resource Include="Images\Units\Knight.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Mangonel.png" />
+    <Resource Include="Images\Units\Mangonel.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Villager.png" />
+    <Resource Include="Images\Units\Villager.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\EagleScout.png" />
+    <Resource Include="Images\Units\EagleScout.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Condotierro.png" />
+    <Resource Include="Images\Units\Condotierro.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Huskarl.png" />
+    <Resource Include="Images\Units\Huskarl.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Skirmisher.png" />
+    <Resource Include="Images\Units\Skirmisher.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\CavalryArcher.png" />
+    <Resource Include="Images\Units\CavalryArcher.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HandCannoneer.png" />
+    <Resource Include="Images\Units\HandCannoneer.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Slinger.png" />
+    <Resource Include="Images\Units\Slinger.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Genitour.png" />
+    <Resource Include="Images\Units\Genitour.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\ScoutCavalry.png" />
+    <Resource Include="Images\Units\ScoutCavalry.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Camel.png" />
+    <Resource Include="Images\Units\Camel.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\BattleElephant.png" />
+    <Resource Include="Images\Units\BattleElephant.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Tarkan.png" />
+    <Resource Include="Images\Units\Tarkan.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\BatteringRam.png" />
+    <Resource Include="Images\Units\BatteringRam.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Scorpion.png" />
+    <Resource Include="Images\Units\Scorpion.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\BombardCannon.png" />
+    <Resource Include="Images\Units\BombardCannon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\SiegeTower.png" />
+    <Resource Include="Images\Units\SiegeTower.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\Resources\Tree.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buildings\LumberCamp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buildings\Mill.png" />
+    <Resource Include="Images\Buildings\MiningCamp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Resources\GoldOre.png" />
+    <Resource Include="Images\Resources\Rocks.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -96,7 +96,7 @@ namespace AoE.Actions
         {
             if (Unit is BaseRangedUnit rangedUnit)
             {
-                var distance = rangedUnit.DistanceToUnit(Target);
+                var distance = rangedUnit.Distance(Target);
                 if (distance > rangedUnit.MaxRange * MainWindow.tilesize)
                 {
                     rangedUnit.Position = rangedUnit.Position.MoveTowards(Target.Position, dt, rangedUnit.Speed * MainWindow.tilesize);

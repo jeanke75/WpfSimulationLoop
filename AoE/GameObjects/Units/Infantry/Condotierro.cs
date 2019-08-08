@@ -4,7 +4,7 @@ namespace AoE.GameObjects.Units.Infantry
 {
     class Condotierro : BaseUnit
     {
-        public Condotierro(Vector position, Team team) : base(position, 18f, 18f, "Condotierro", 80, 9, 0, 0f, 1.93f, 1, 0, 1.2f, 6, "Condotierro.png", team)
+        public Condotierro(Vector position, Team owner) : base(position, 18f, 18f, "Condotierro", 80, 9, 0, 0f, 1.93f, 1, 0, 1.2f, 6, "Condotierro.png", owner)
         {
             AttackBonuses.Add(ArmorType.GunpowderUnit, 10);
             AttackBonuses.Add(ArmorType.StandardBuilding, 2);

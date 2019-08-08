@@ -4,7 +4,7 @@ namespace AoE.GameObjects.Units.Infantry
 {
     class Huskarl : BaseUnit
     {
-        public Huskarl(Vector position, Team team) : base(position, 18f, 18f, "Huskarl", 60, 10, 0, 0f, 2.03f, 0, 6, 1.05f, 3, "Huskarl.png", team)
+        public Huskarl(Vector position, Team owner) : base(position, 18f, 18f, "Huskarl", 60, 10, 0, 0f, 2.03f, 0, 6, 1.05f, 3, "Huskarl.png", owner)
         {
             AttackBonuses.Add(ArmorType.Archer, 6);
             AttackBonuses.Add(ArmorType.EagleWarrior, 2);

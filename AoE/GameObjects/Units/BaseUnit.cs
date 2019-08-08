@@ -1,6 +1,5 @@
 ﻿using AoE.Actions;
 using DrawingBase;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -8,7 +7,7 @@ using System.Windows.Media;
 
 namespace AoE.GameObjects.Units
 {
-    abstract class BaseUnit : BaseGameObject, ISelectable
+    abstract class BaseUnit : BaseGameObject, ISelectable, IOwnable
     {
         public readonly int HitPointsMax;
         private int _HitPoints;
@@ -53,9 +52,9 @@ namespace AoE.GameObjects.Units
 
         public BaseAction action;
 
-        public Team Team { get; set; }
+        private Team owner;
 
-        public BaseUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team team) : base(position, width, height, name, imageId)
+        public BaseUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team owner) : base(position, width, height, name, "Units/" + imageId)
         {
             HitPointsMax = hitPoints >= 1 ? hitPoints : 1;
             HitPoints = HitPointsMax;
@@ -71,7 +70,7 @@ namespace AoE.GameObjects.Units
             Speed = speed >= 0 ? speed : 0;
             LineOfSight = lineOfSight >= 1 ? lineOfSight : 1;
 
-            Team = team;
+            this.owner = owner;
         }
 
         public virtual void Update(float dt, List<BaseUnit> units)
@@ -104,14 +103,14 @@ namespace AoE.GameObjects.Units
             }
         }
 
-        public override void Draw(DrawingContext dc, List<Team> teams)
+        public virtual void Draw(DrawingContext dc, List<Team> teams)
         {
-            base.Draw(dc, teams);
+            base.Draw(dc);
 
             var unitRect = Rect;
 
             // Draw team color
-            var teamColor = teams.Where(x => x.Id == Team.Id).Single().Color;
+            var teamColor = teams.Where(x => x.Id == owner.Id).Single().Color;
             dc.PushTransform(new TranslateTransform(unitRect.X + Width / 2, unitRect.Y - 15));
             dc.PushTransform(new RotateTransform(60));
             dc.DrawEquilateralTriangle(new SolidColorBrush(teamColor), null, 8, true);
@@ -139,8 +138,8 @@ namespace AoE.GameObjects.Units
             var distanceToClosest = double.MaxValue;
             foreach (BaseUnit unit in units)
             {
-                if (unit.Team.Id == Team.Id || unit.HitPoints == 0) continue;
-                var distance = DistanceToUnit(unit) / MainWindow.tilesize;
+                if (unit.owner.Id == owner.Id || unit.HitPoints == 0) continue;
+                var distance = Distance(unit) / MainWindow.tilesize;
                 if (distance <= LineOfSight + Radius && distance < distanceToClosest)
                 {
                     distanceToClosest = distance;
@@ -150,22 +149,24 @@ namespace AoE.GameObjects.Units
             return closestUnit;
         }
 
-        /*
-         * Value < 0: Units are overlapping
-         */
-        public double DistanceToUnit(BaseUnit other)
-        {
-            return Math.Sqrt(Math.Pow(other.Position.X - Position.X, 2) + Math.Pow(other.Position.Y - Position.Y, 2)) - (other.Radius + Radius);
-        }
-
         public virtual bool UnitInRange(BaseUnit other)
         {
-            return DistanceToUnit(other) <= 0.1f * MainWindow.tilesize;
+            return Distance(other) <= 0.1f * MainWindow.tilesize;
         }
 
         protected virtual void MoveTowardsPosition(float dt, Vector position)
         {
             Position = Position.MoveTowards(position, dt, Speed * MainWindow.tilesize);
+        }
+
+        public Team GetOwner()
+        {
+            return owner;
+        }
+
+        public void SetOwner(Team newOwner)
+        {
+            owner = newOwner;
         }
     }
 }
