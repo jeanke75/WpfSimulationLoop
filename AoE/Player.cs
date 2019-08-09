@@ -6,18 +6,16 @@ using System.Windows.Media;
 
 namespace AoE
 {
-    class Team
+    class Player
     {
         public readonly uint Id;
         public readonly Color Color;
-        public readonly List<BaseUnit> Units;
         private readonly Dictionary<ResourceType, int> Resources = new Dictionary<ResourceType, int>(); 
 
-        public Team(uint teamId, Color color)
+        public Player(uint playerId, Color color)
         {
-            Id = teamId;
+            Id = playerId;
             Color = color;
-            Units = new List<BaseUnit>();
             foreach (ResourceType resourceType in Enum.GetValues(typeof(ResourceType)))
             {
                 Resources.Add(resourceType, 0);

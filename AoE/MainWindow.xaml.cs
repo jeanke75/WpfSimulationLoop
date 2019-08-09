@@ -28,44 +28,54 @@ namespace AoE
         public static readonly bool ShowAttackRange = true;
         public static readonly bool ShowTimeUntillAttack = true;
         public static readonly bool ShowGameObjectRadius = false;
-        readonly List<Team> teams = new List<Team>();
+        readonly List<Player> players = new List<Player>();
         readonly List<BaseUnit> units = new List<BaseUnit>();
         readonly List<BaseResource> resources = new List<BaseResource>();
         readonly List<BaseBuilding> buildings = new List<BaseBuilding>();
 
+        Player player;
         ISelectable selectedGameObject = null;
+
+        private PlayerInfoPanel playerInfoPanel;
         private SelectionPanel selectionPanel;
 
         public override void Initialize()
         {
             SetResolution(800, 600);
 
+            // UI
+            playerInfoPanel = new PlayerInfoPanel(this);
             selectionPanel = new SelectionPanel(this);
 
+            // Players
             for (uint i = 0; i < 2; i++)
             {
-                teams.Add(new Team(i, Color.FromRgb((byte)random.Next(50, 255), (byte)random.Next(50, 255), (byte)random.Next(50, 255))));
+                players.Add(new Player(i, Color.FromRgb((byte)random.Next(50, 255), (byte)random.Next(50, 255), (byte)random.Next(50, 255))));
             }
 
+            player = players[0];
+
             // Add resources to the map
-            resources.Add(new Rocks(new Vector(100, 4)));
-            resources.Add(new Rocks(new Vector(116, 4)));
-            resources.Add(new Tree(new Vector(132, 4)));
-            resources.Add(new Tree(new Vector(148, 4)));
-            resources.Add(new GoldOre(new Vector(164, 4)));
-            resources.Add(new GoldOre(new Vector(180, 4)));
+            resources.Add(new Rocks(new Vector(100, 25)));
+            resources.Add(new Rocks(new Vector(116, 25)));
+            resources.Add(new Tree(new Vector(132, 25)));
+            resources.Add(new Tree(new Vector(148, 25)));
+            resources.Add(new GoldOre(new Vector(164, 25)));
+            resources.Add(new GoldOre(new Vector(180, 25)));
 
-            buildings.Add(new LumberCamp(10, 10, teams[0]));
-            buildings.Add(new MiningCamp(12, 10, teams[0]));
-            buildings.Add(new Mill(14, 10, teams[0]));
+            // Add buildings to the map
+            buildings.Add(new LumberCamp(10, 10, players[0]));
+            buildings.Add(new MiningCamp(12, 10, players[0]));
+            buildings.Add(new Mill(14, 10, players[0]));
 
+            // Add units to the map
             for (int i = 0; i < 2; i++)
             {
-                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), teams[0]));
+                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
                 units[i * 3].action = new Gather(units[i * 3], resources[0], resources, buildings);
-                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), teams[0]));
+                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
                 units[i * 3 + 1].action = new Gather(units[i * 3 + 1], resources[2], resources, buildings);
-                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), teams[0]));
+                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
                 units[i * 3 + 2].action = new Gather(units[i * 3 + 2], resources[4], resources, buildings);
             }
         }
@@ -178,7 +188,7 @@ namespace AoE
             // Draw units
             foreach (BaseUnit unit in units)
             {
-                unit.Draw(dc, teams);
+                unit.Draw(dc, players);
 
                 // Draw outline if selected
                 if (unit == selectedGameObject)
@@ -188,6 +198,7 @@ namespace AoE
             }
 
             // Draw UI
+            playerInfoPanel.Draw(dc, player, units);
             selectionPanel.Draw(dc, selectedGameObject);
         }
 

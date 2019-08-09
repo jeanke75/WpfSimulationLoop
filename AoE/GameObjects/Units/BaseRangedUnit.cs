@@ -14,7 +14,7 @@ namespace AoE.GameObjects.Units
         
         // TODO list of projectiles
 
-        public BaseRangedUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int minRange, int maxRange, float accuracy, float projectileSpeed, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team owner) :
+        public BaseRangedUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int minRange, int maxRange, float accuracy, float projectileSpeed, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Player owner) :
             base(position, width, height, name, hitPoints, meleeAttack, pierceAttack, blastRadius, rateOfFire, meleeArmor, pierceArmor, speed, lineOfSight, imageId, owner)
         {
             MinRange = minRange >= 0 ? minRange : 0;
@@ -33,9 +33,9 @@ namespace AoE.GameObjects.Units
             ProjectileSpeed = projectileSpeed >= 1f ? projectileSpeed : 1f;
         }
 
-        public override void Draw(DrawingContext dc, List<Team> teams)
+        public override void Draw(DrawingContext dc, List<Player> players)
         {
-            base.Draw(dc, teams); 
+            base.Draw(dc, players); 
 
             // Draw attack range
             if (MainWindow.ShowAttackRange)

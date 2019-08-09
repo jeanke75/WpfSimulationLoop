@@ -72,7 +72,7 @@
     <Compile Include="GameObjects\Resources\GoldOre.cs" />
     <Compile Include="GameObjects\Resources\Rocks.cs" />
     <Compile Include="GameObjects\Resources\Tree.cs" />
-    <Compile Include="Team.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="GameObjects\Units\Siege\BatteringRam.cs" />
     <Compile Include="GameObjects\Units\Siege\BombardCannon.cs" />
     <Compile Include="GameObjects\Units\Siege\SiegeTower.cs" />
@@ -97,6 +97,7 @@
     <Compile Include="GameObjects\Units\Infantry\Spearman.cs" />
     <Compile Include="GameObjects\Units\Infantry\EagleScout.cs" />
     <Compile Include="GameObjects\Units\Civilian\Villager.cs" />
+    <Compile Include="UI\PlayerInfoPanel.cs" />
     <Compile Include="UI\SelectionPanel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

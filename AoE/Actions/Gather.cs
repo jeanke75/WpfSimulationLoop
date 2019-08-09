@@ -154,7 +154,7 @@ namespace AoE.Actions
                 if (distanceToClosest < 0.1f)
                 {
                     // If storage is within range, drop off goods
-                    Team owner = Unit.GetOwner();
+                    Player owner = Unit.GetOwner();
                     owner.SetResource(Resource.Type, owner.GetResource(Resource.Type) + AmountCarried);
                     AmountCarried = 0;
                 }

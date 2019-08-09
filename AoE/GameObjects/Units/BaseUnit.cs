@@ -52,9 +52,9 @@ namespace AoE.GameObjects.Units
 
         public BaseAction action;
 
-        private Team owner;
+        private Player owner;
 
-        public BaseUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Team owner) : base(position, width, height, name, "Units/" + imageId)
+        public BaseUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Player owner) : base(position, width, height, name, "Units/" + imageId)
         {
             HitPointsMax = hitPoints >= 1 ? hitPoints : 1;
             HitPoints = HitPointsMax;
@@ -103,17 +103,17 @@ namespace AoE.GameObjects.Units
             }
         }
 
-        public virtual void Draw(DrawingContext dc, List<Team> teams)
+        public virtual void Draw(DrawingContext dc, List<Player> players)
         {
             base.Draw(dc);
 
             var unitRect = Rect;
 
-            // Draw team color
-            var teamColor = teams.Where(x => x.Id == owner.Id).Single().Color;
+            // Draw player color
+            var playerColor = players.Where(x => x.Id == owner.Id).Single().Color;
             dc.PushTransform(new TranslateTransform(unitRect.X + Width / 2, unitRect.Y - 15));
             dc.PushTransform(new RotateTransform(60));
-            dc.DrawEquilateralTriangle(new SolidColorBrush(teamColor), null, 8, true);
+            dc.DrawEquilateralTriangle(new SolidColorBrush(playerColor), null, 8, true);
             dc.Pop();
             dc.Pop();
 
@@ -159,12 +159,12 @@ namespace AoE.GameObjects.Units
             Position = Position.MoveTowards(position, dt, Speed * MainWindow.tilesize);
         }
 
-        public Team GetOwner()
+        public Player GetOwner()
         {
             return owner;
         }
 
-        public void SetOwner(Team newOwner)
+        public void SetOwner(Player newOwner)
         {
             owner = newOwner;
         }

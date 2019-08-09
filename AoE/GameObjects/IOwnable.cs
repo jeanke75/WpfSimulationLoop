@@ -2,8 +2,8 @@
 {
     interface IOwnable
     {
-        Team GetOwner();
+        Player GetOwner();
 
-        void SetOwner(Team owner);
+        void SetOwner(Player owner);
     }
 }

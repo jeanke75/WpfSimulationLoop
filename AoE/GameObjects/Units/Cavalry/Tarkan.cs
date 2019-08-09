@@ -4,7 +4,7 @@ namespace AoE.GameObjects.Units.Cavalry
 {
     class Tarkan : BaseUnit
     {
-        public Tarkan(Vector position, Team owner) : base(position, 18f, 18f, "Tarkan", 100, 8, 0, 0f, 2.13f, 1, 3, 1.35f, 5, "Tarkan.png", owner)
+        public Tarkan(Vector position, Player owner) : base(position, 18f, 18f, "Tarkan", 100, 8, 0, 0f, 2.13f, 1, 3, 1.35f, 5, "Tarkan.png", owner)
         {
             AttackBonuses.Add(ArmorType.StoneDefense, 12);
             AttackBonuses.Add(ArmorType.Castle, 10);
