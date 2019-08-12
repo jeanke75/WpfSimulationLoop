@@ -1,11 +1,9 @@
-﻿using AoE.Actions;
-using AoE.GameObjects;
+﻿using AoE.GameObjects;
 using AoE.GameObjects.Buildings;
 using AoE.GameObjects.Buildings.Storage;
 using AoE.GameObjects.Resources;
 using AoE.GameObjects.Units;
 using AoE.GameObjects.Units.Archers;
-using AoE.GameObjects.Units.Cavalry;
 using AoE.GameObjects.Units.Civilian;
 using AoE.UI;
 using DrawingBase;
@@ -66,18 +64,20 @@ namespace AoE
             // Add buildings to the map
             buildings.Add(new LumberCamp(10, 10, players[0]));
             buildings.Add(new MiningCamp(12, 10, players[0]));
-            buildings.Add(new Mill(14, 10, players[0]));
+            buildings.Add(new Mill(14, 10, players[1]));
 
             // Add units to the map
             for (int i = 0; i < 2; i++)
             {
                 units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
-                units[i * 3].action = new Gather(units[i * 3], resources[0], resources, buildings);
+                (units[i * 3] as IGatherer).Gather(resources[0], resources, buildings);
                 units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
-                units[i * 3 + 1].action = new Gather(units[i * 3 + 1], resources[2], resources, buildings);
+                (units[i * 3 + 1] as IGatherer).Gather(resources[2], resources, buildings);
                 units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
-                units[i * 3 + 2].action = new Gather(units[i * 3 + 2], resources[4], resources, buildings);
+                (units[i * 3 + 2] as IGatherer).Gather(resources[4], resources, buildings);
             }
+
+            units.Add(new Archer(new Vector((random.NextDouble() + 1) * tilesize + 30, 200), players[1]));
         }
 
         public override void Update(float dt)
@@ -99,37 +99,50 @@ namespace AoE
             }
             else if (InputHelper.Mouse.GetState(MouseButton.Right) == ButtonState.Pressed)
             {
-                if (selectedGameObject is BaseUnit selectedBaseUnit)
+                // Right-click actions are only available for game objects owned by the player
+                if (selectedGameObject is IOwnable selectedOwnedGameObject && selectedOwnedGameObject.GetOwner() == player)
                 {
-                    BaseGameObject targetGameObject = null;
-                    var mousePos = InputHelper.Mouse.GetPosition();
-                    foreach (BaseGameObject gameObject in GetAllGameObjects())
+                    if (selectedGameObject is BaseUnit selectedBaseUnit)
                     {
-                        if (gameObject is ISelectable && gameObject.MouseOver(mousePos))
+                        BaseGameObject targetGameObject = null;
+                        var mousePos = InputHelper.Mouse.GetPosition();
+                        foreach (BaseGameObject gameObject in GetAllGameObjects())
                         {
-                            targetGameObject = gameObject;
-                            break;
-                        }
-                    }
-
-                    if (targetGameObject is BaseUnit targetBaseUnit)
-                    {
-                        if (targetBaseUnit != selectedBaseUnit)
-                        {
-                            if (targetBaseUnit.GetOwner() != selectedBaseUnit.GetOwner())
+                            if (gameObject is ISelectable && gameObject.MouseOver(mousePos))
                             {
-                                selectedBaseUnit.action = new Attack(selectedBaseUnit, targetBaseUnit, units);
+                                targetGameObject = gameObject;
+                                break;
                             }
                         }
-                    }
-                    else if (targetGameObject is BaseResource targetBaseResource)
-                    {
-                        if (selectedBaseUnit is Villager)
-                            selectedBaseUnit.action = new Gather(selectedBaseUnit, targetBaseResource, resources, buildings);
-                    }
-                    else
-                    {
-                        selectedBaseUnit.action = new Move(selectedBaseUnit, new Vector(mousePos.X, mousePos.Y));
+
+                        if (targetGameObject is IDestroyable targetDestroyable)
+                        {
+                            if (targetDestroyable != selectedBaseUnit)
+                            {
+                                if (targetDestroyable is IOwnable targetOwnableDestroyable)
+                                {
+                                    // If it can be owned, only attack if it's not owned by the player
+                                    if (targetOwnableDestroyable.GetOwner() != player)
+                                    {
+                                        selectedBaseUnit.Attack(targetDestroyable, units);
+                                    }
+                                }
+                                else
+                                {
+                                    selectedBaseUnit.Attack(targetDestroyable, units);
+                                }
+                            }
+                        }
+                        else if (targetGameObject is BaseResource targetBaseResource)
+                        {
+                            if (selectedBaseUnit is IGatherer selectedGatherer)
+                                selectedGatherer.Gather(targetBaseResource, resources, buildings);
+                        }
+                        else if (targetGameObject == null)
+                        {
+                            if (selectedBaseUnit is IMoveable selectedMoveable)
+                                selectedMoveable.MoveTo(new Vector(mousePos.X, mousePos.Y));
+                        }
                     }
                 }
             }
@@ -148,7 +161,7 @@ namespace AoE
             for (int i = units.Count - 1; i >= 0; i--)
             {
                 var unit = units[i];
-                if (unit.HitPoints > 0)
+                if (unit.GetHitPoints() > 0)
                     unit.Update(dt, units);
                 else
                 {

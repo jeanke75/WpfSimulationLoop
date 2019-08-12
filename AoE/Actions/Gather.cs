@@ -75,7 +75,7 @@ namespace AoE.Actions
                         }
                         else
                         {
-                            Unit.Position = Unit.Position.MoveTowards(Resource.Position, dt, Unit.Speed * MainWindow.tilesize);
+                            Unit.Position = Unit.Position.MoveTowards(Resource.Position, dt, Unit.GetMovementSpeed() * MainWindow.tilesize);
 
                             // Reset timer
                             TimeUntillNextGather = GatherSpeed;
@@ -161,7 +161,7 @@ namespace AoE.Actions
                 else
                 {
                     // Otherwise move towards it
-                    Unit.Position = Unit.Position.MoveTowards(closestStorage.Position, dt, Unit.Speed * MainWindow.tilesize);
+                    Unit.Position = Unit.Position.MoveTowards(closestStorage.Position, dt, Unit.GetMovementSpeed() * MainWindow.tilesize);
                 }
             }
         }

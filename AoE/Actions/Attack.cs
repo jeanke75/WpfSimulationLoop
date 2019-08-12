@@ -9,33 +9,33 @@ namespace AoE.Actions
 {
     class Attack : BaseAction
     {
-        private readonly BaseUnit Unit;
-        public readonly BaseUnit Target;
+        private readonly ICombat attacker;
+        public readonly IDestroyable Target;
         private readonly List<BaseUnit> AllUnits;
 
-        public Attack(BaseUnit unit, BaseUnit target, List<BaseUnit> units)
+        public Attack(ICombat attacker, IDestroyable target, List<BaseUnit> units)
         {
-            Unit = unit;
+            this.attacker = attacker;
             Target = target;
             AllUnits = units;
         }
 
         public override void Do(float dt)
         {
-            if (Target.HitPoints > 0)
+            if (!Target.Destroyed())
             {
-                if (Unit.UnitInRange(Target))
+                if (TargetInRange())
                 {
-                    if (Unit.TimeUntillAttack == 0)
+                    if (attacker.GetTimeUntillNextAttack() == 0)
                     {
-                        if (Unit.BlastRadius > 0)
+                        if (attacker.GetBlastRadius() > 0)
                             DealBlastDamage(Target, AllUnits);
                         else
                             DealDamage(Target);
-                        Unit.TimeUntillAttack = Unit.RateOfFire;
+                        attacker.ResetTimeUntillNextAttack();
                     }
                 }
-                else
+                else if (attacker is IMoveable)
                 {
                     MoveTowardsAttackRange(dt);
                 }
@@ -44,33 +44,54 @@ namespace AoE.Actions
 
         public override bool Completed()
         {
-            return Target.HitPoints == 0;
+            return Target.Destroyed();
         }
 
-        private void DealDamage(BaseUnit target)
+        private bool TargetInRange()
         {
-            if (Unit is BaseRangedUnit rangedUnit && MainWindow.random.NextDouble() > rangedUnit.Accuracy)
+            var distance = (attacker as BaseGameObject).Distance(Target as BaseGameObject);
+            if (attacker is IRangedCombat rangedAttacker)
+                return distance >= rangedAttacker.GetAttackRangeMin() * MainWindow.tilesize && distance <= rangedAttacker.GetAttackRangeMax() * MainWindow.tilesize;
+            else
+                return distance <= 0.1f * MainWindow.tilesize;
+        }
+
+        private void DealDamage(IDestroyable target)
+        {
+            if (attacker is IRangedCombat rangedCombat && MainWindow.random.NextDouble() > rangedCombat.GetAccuracy())
                 return;
 
-            var meleeDamage = Math.Max(0, Unit.MeleeAttack - target.MeleeArmor);
-            var pierceDamage = Math.Max(0, Unit.PierceAttack - target.PierceArmor);
-            var bonusDamage = 0;
-            foreach (KeyValuePair<ArmorType, int> bonusResist in target.ArmorTypes)
+            // Check if the target can defend itself
+            if (target is ICombat combatTarget)
             {
-                if (Unit.AttackBonuses.TryGetValue(bonusResist.Key, out int attackBonus))
+                var meleeDamage = Math.Max(0, attacker.GetMeleeAttack() - combatTarget.GetMeleeArmor());
+                var pierceDamage = Math.Max(0, attacker.GetPierceAttack() - combatTarget.GetPierceArmor());
+                var bonusDamage = 0;
+                foreach (KeyValuePair<ArmorType, int> bonusResist in combatTarget.GetArmorTypes())
                 {
-                    bonusDamage += Math.Max(0, attackBonus - bonusResist.Value);
+                    if (attacker.GetAttackBonuses().TryGetValue(bonusResist.Key, out int attackBonus))
+                    {
+                        bonusDamage += Math.Max(0, attackBonus - bonusResist.Value);
+                    }
+                }
+
+                target.TakeDamage(Math.Max(1, meleeDamage + pierceDamage + bonusDamage));
+
+                if (target is IActionable actionableTarget)
+                {
+                    if (!(actionableTarget.GetAction() is Attack || actionableTarget.GetAction() is Move))
+                        combatTarget.Attack(attacker, AllUnits);
                 }
             }
-
-            target.HitPoints -= Math.Max(1, meleeDamage + pierceDamage + bonusDamage);
-            if (!(target.action is Attack || target.action is Move))
-                target.action = new Attack(target, Unit, AllUnits);
+            else
+            {
+                target.TakeDamage(Math.Max(1, attacker.GetMeleeAttack() + attacker.GetPierceAttack()));
+            }
         }
 
-        private void DealBlastDamage(BaseUnit target, List<BaseUnit> units)
+        private void DealBlastDamage(IDestroyable target, List<BaseUnit> units)
         {
-            var unitsInBlast = GetUnitsInBlastRadius(target.Position, units);
+            var unitsInBlast = GetUnitsInBlastRadius((target as BaseGameObject).Position, units);
             foreach (BaseUnit unit in unitsInBlast)
             {
                 DealDamage(unit);
@@ -83,7 +104,7 @@ namespace AoE.Actions
             foreach (BaseUnit unit in units)
             {
                 var distanceToCenter = Math.Sqrt(Math.Pow(unit.Position.X - centerOfBlast.X, 2) + Math.Pow(unit.Position.Y - centerOfBlast.Y, 2));
-                if (distanceToCenter <= unit.BlastRadius * MainWindow.tilesize)
+                if (distanceToCenter <= unit.GetBlastRadius() * MainWindow.tilesize)
                 {
                     unitsInBlast.Add(unit);
                 }
@@ -94,28 +115,30 @@ namespace AoE.Actions
 
         protected virtual void MoveTowardsAttackRange(float dt)
         {
-            if (Unit is BaseRangedUnit rangedUnit)
+            BaseGameObject attackerObject = attacker as BaseGameObject;
+            BaseGameObject targetObject = Target as BaseGameObject;
+            if (attacker is IRangedCombat rangedAttacker)
             {
-                var distance = rangedUnit.Distance(Target);
-                if (distance > rangedUnit.MaxRange * MainWindow.tilesize)
+                var distance = attackerObject.Distance(targetObject);
+                if (distance > rangedAttacker.GetAttackRangeMax() * MainWindow.tilesize)
                 {
-                    rangedUnit.Position = rangedUnit.Position.MoveTowards(Target.Position, dt, rangedUnit.Speed * MainWindow.tilesize);
+                    attackerObject.Position = attackerObject.Position.MoveTowards(targetObject.Position, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.tilesize);
                 }
-                else if (distance < rangedUnit.MinRange * MainWindow.tilesize)
+                else if (distance < rangedAttacker.GetAttackRangeMin() * MainWindow.tilesize)
                 {
-                    // If the target of this unit is not targetting this unit, move away from the target to attack it
-                    if (Target.action is Attack targetAttackAction && targetAttackAction.Target != rangedUnit)
+                    // if the attacker is not targetted by it's target, move away from the target to attack
+                    if (Target is IActionable actionableTarget && actionableTarget.GetAction() is Attack targetAttackAction && targetAttackAction.Target != rangedAttacker)
                     {
-                        var direction = Target.Position - rangedUnit.Position;
-                        direction.SetMagnitude(rangedUnit.MinRange * MainWindow.tilesize + Target.Radius + rangedUnit.Radius);
-                        var newPosition = rangedUnit.Position - direction;
-                        rangedUnit.Position = rangedUnit.Position.MoveTowards(newPosition, dt, rangedUnit.Speed * MainWindow.tilesize);
+                        var direction = targetObject.Position - attackerObject.Position;
+                        direction.SetMagnitude(rangedAttacker.GetAttackRangeMin() * MainWindow.tilesize + targetObject.Radius + attackerObject.Radius);
+                        var newPosition = attackerObject.Position - direction;
+                        attackerObject.Position = attackerObject.Position.MoveTowards(newPosition, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.tilesize);
                     }
                 }
             }
             else
             {
-                Unit.Position = Unit.Position.MoveTowards(Target.Position, dt, Unit.Speed * MainWindow.tilesize);
+                attackerObject.Position = attackerObject.Position.MoveTowards(targetObject.Position, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.tilesize);
             }
         }
     }

@@ -1,17 +1,18 @@
 ﻿using AoE.Actions;
 using DrawingBase;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
 namespace AoE.GameObjects.Units
 {
-    abstract class BaseUnit : BaseGameObject, ISelectable, IOwnable
+    abstract class BaseUnit : BaseGameObject, ISelectable, IActionable, IMoveable, ICombat, IOwnable
     {
-        public readonly int HitPointsMax;
+        private readonly int HitPointsMax;
         private int _HitPoints;
-        public int HitPoints
+        protected int HitPoints
         {
             get
             {
@@ -27,13 +28,13 @@ namespace AoE.GameObjects.Units
                     _HitPoints = value;
             }
         }
-        public readonly int MeleeAttack;
-        public readonly int PierceAttack;
-        public readonly Dictionary<ArmorType, int> AttackBonuses;
-        public readonly float BlastRadius;
-        public readonly float RateOfFire;
+        private readonly int MeleeAttack;
+        private readonly int PierceAttack;
+        protected readonly Dictionary<ArmorType, int> AttackBonuses;
+        private readonly float BlastRadius;
+        private readonly float RateOfFire;
         private float _TimeUntillAttack;
-        public float TimeUntillAttack
+        protected float TimeUntillAttack
         {
             get
             {
@@ -44,13 +45,13 @@ namespace AoE.GameObjects.Units
                 _TimeUntillAttack = value >= 0 ? value : 0;
             }
         }
-        public readonly int MeleeArmor;
-        public readonly int PierceArmor;
-        public readonly Dictionary<ArmorType, int> ArmorTypes;
-        public readonly float Speed;
+        private readonly int MeleeArmor;
+        private readonly int PierceArmor;
+        protected readonly Dictionary<ArmorType, int> ArmorTypes;
+        private readonly float Speed;
         public readonly int LineOfSight;
 
-        public BaseAction action;
+        protected BaseAction action;
 
         private Player owner;
 
@@ -80,7 +81,7 @@ namespace AoE.GameObjects.Units
                 TimeUntillAttack -= dt;
                 if (TimeUntillAttack < 0)
                     TimeUntillAttack = 0;
-                
+
                 if (action != null)
                 {
                     if (!action.Completed())
@@ -119,7 +120,7 @@ namespace AoE.GameObjects.Units
 
             // Draw blast radius
             if (MainWindow.ShowAttackRange && action is Attack attackAction && attackAction.Target != null && BlastRadius > 0)
-                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(attackAction.Target.Position.X, attackAction.Target.Position.Y), BlastRadius * MainWindow.tilesize, BlastRadius * MainWindow.tilesize);
+                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point((attackAction.Target as BaseGameObject).Position.X, (attackAction.Target as BaseGameObject).Position.Y), BlastRadius * MainWindow.tilesize, BlastRadius * MainWindow.tilesize);
 
             // Draw line of sight
             if (MainWindow.ShowLineOfSight)
@@ -149,16 +150,103 @@ namespace AoE.GameObjects.Units
             return closestUnit;
         }
 
-        public virtual bool UnitInRange(BaseUnit other)
+        #region IActionable
+        public BaseAction GetAction()
         {
-            return Distance(other) <= 0.1f * MainWindow.tilesize;
+            return action;
+        }
+        #endregion
+
+        #region IMoveable
+        public float GetMovementSpeed()
+        {
+            return Speed;
         }
 
-        protected virtual void MoveTowardsPosition(float dt, Vector position)
+        public void MoveTo(Vector destination)
         {
-            Position = Position.MoveTowards(position, dt, Speed * MainWindow.tilesize);
+            action = new Move(this, destination);
+        }
+        #endregion
+
+        #region ICombat
+        public int GetHitPoints()
+        {
+            return HitPoints;
         }
 
+        public int GetHitPointsMax()
+        {
+            return HitPointsMax;
+        }
+
+        public int GetMeleeAttack()
+        {
+            return MeleeAttack;
+        }
+
+        public int GetPierceAttack()
+        {
+            return PierceAttack;
+        }
+
+        public ReadOnlyDictionary<ArmorType, int> GetAttackBonuses()
+        {
+            return new ReadOnlyDictionary<ArmorType, int>(AttackBonuses);
+        }
+
+        public float GetBlastRadius()
+        {
+            return BlastRadius;
+        }
+
+        public float GetRateOfFire()
+        {
+            return RateOfFire;
+        }
+
+        public float GetTimeUntillNextAttack()
+        {
+            return TimeUntillAttack;
+        }
+
+        public void ResetTimeUntillNextAttack()
+        {
+            TimeUntillAttack = GetRateOfFire();
+        }
+
+        public int GetMeleeArmor()
+        {
+            return MeleeArmor;
+        }
+
+        public int GetPierceArmor()
+        {
+            return PierceArmor;
+        }
+
+        public ReadOnlyDictionary<ArmorType, int> GetArmorTypes()
+        {
+            return new ReadOnlyDictionary<ArmorType, int>(ArmorTypes);
+        }
+
+        public void Attack(IDestroyable destroyable, List<BaseUnit> destroyables)
+        {
+            action = new Attack(this, destroyable, destroyables);
+        }
+
+        public void TakeDamage(int damage)
+        {
+            HitPoints -= damage;
+        }
+
+        public bool Destroyed()
+        {
+            return HitPoints == 0;
+        }
+        #endregion
+
+        #region IOwnable
         public Player GetOwner()
         {
             return owner;
@@ -168,5 +256,6 @@ namespace AoE.GameObjects.Units
         {
             owner = newOwner;
         }
+        #endregion
     }
 }

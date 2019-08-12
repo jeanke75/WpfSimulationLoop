@@ -1,5 +1,4 @@
 ﻿using AoE.GameObjects.Resources;
-using AoE.GameObjects.Units;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
@@ -10,7 +9,7 @@ namespace AoE
     {
         public readonly uint Id;
         public readonly Color Color;
-        private readonly Dictionary<ResourceType, int> Resources = new Dictionary<ResourceType, int>(); 
+        private readonly Dictionary<ResourceType, int> Resources = new Dictionary<ResourceType, int>();
 
         public Player(uint playerId, Color color)
         {

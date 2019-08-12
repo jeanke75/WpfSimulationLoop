@@ -5,13 +5,13 @@ using System.Windows.Media;
 
 namespace AoE.GameObjects.Units
 {
-    abstract class BaseRangedUnit : BaseUnit
+    abstract class BaseRangedUnit : BaseUnit, IRangedCombat
     {
-        public readonly int MinRange;
-        public readonly int MaxRange;
-        public readonly float Accuracy;
-        public readonly float ProjectileSpeed;
-        
+        protected readonly int MinRange;
+        protected readonly int MaxRange;
+        protected readonly float Accuracy;
+        protected readonly float ProjectileSpeed;
+
         // TODO list of projectiles
 
         public BaseRangedUnit(Vector position, double width, double height, string name, int hitPoints, int meleeAttack, int pierceAttack, float blastRadius, float rateOfFire, int minRange, int maxRange, float accuracy, float projectileSpeed, int meleeArmor, int pierceArmor, float speed, int lineOfSight, string imageId, Player owner) :
@@ -35,7 +35,7 @@ namespace AoE.GameObjects.Units
 
         public override void Draw(DrawingContext dc, List<Player> players)
         {
-            base.Draw(dc, players); 
+            base.Draw(dc, players);
 
             // Draw attack range
             if (MainWindow.ShowAttackRange)
@@ -46,15 +46,31 @@ namespace AoE.GameObjects.Units
 
                 // max range
                 dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Position.X, Position.Y), Radius + MaxRange * MainWindow.tilesize, Radius + MaxRange * MainWindow.tilesize);
-            } 
+            }
 
             // Draw projectile
         }
 
-        public override bool UnitInRange(BaseUnit other)
+        #region IRangedcombat
+        public double GetAttackRangeMin()
         {
-            var distance = Distance(other);
-            return distance >= MinRange * MainWindow.tilesize && distance <= MaxRange * MainWindow.tilesize;
+            return MinRange;
         }
+
+        public double GetAttackRangeMax()
+        {
+            return MaxRange;
+        }
+
+        public float GetAccuracy()
+        {
+            return Accuracy;
+        }
+
+        public float GetProjectileSpeed()
+        {
+            return ProjectileSpeed;
+        }
+        #endregion
     }
 }

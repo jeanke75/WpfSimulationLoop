@@ -1,4 +1,5 @@
-﻿using AoE.GameObjects.Units;
+﻿using AoE.GameObjects;
+using AoE.GameObjects.Units;
 using DrawingBase;
 using System.Windows;
 
@@ -6,24 +7,28 @@ namespace AoE.Actions
 {
     class Move : BaseAction
     {
-        private readonly BaseUnit unit;
+        private readonly IMoveable moveableObject;
         private readonly Vector position;
 
-        public Move(BaseUnit unitToMove, Vector positionToMoveTo)
+        public Move(IMoveable moveable, Vector positionToMoveTo)
         {
-            unit = unitToMove;
+            moveableObject = moveable;
             position = positionToMoveTo;
         }
 
         public override void Do(float dt)
         {
             if (!Completed())
-                unit.Position = unit.Position.MoveTowards(position, dt, unit.Speed * MainWindow.tilesize);
+            {
+                BaseGameObject gameObject = moveableObject as BaseGameObject;
+                gameObject.Position = gameObject.Position.MoveTowards(position, dt, moveableObject.GetMovementSpeed() * MainWindow.tilesize);
+            }
         }
 
         public override bool Completed()
         {
-            return unit.Position.X == position.X && unit.Position.Y == position.Y;
+            BaseGameObject gameObject = moveableObject as BaseGameObject;
+            return gameObject.Position.X == position.X && gameObject.Position.Y == position.Y;
         }
     }
 }
