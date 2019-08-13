@@ -1,5 +1,6 @@
 ﻿using AoE.Actions;
 using AoE.GameObjects;
+using AoE.GameObjects.Buildings;
 using AoE.GameObjects.Resources;
 using DrawingBase;
 using System.Globalization;
@@ -100,17 +101,24 @@ namespace AoE.UI
                     }
                 }
 
-                if (selectedBaseGameObject is IActionable slectedActionable && slectedActionable.GetAction() is Gather selectedActionableGatherAction && !selectedActionableGatherAction.Completed())
+                if (selectedBaseGameObject is IActionable selectedActionable && selectedActionable.GetAction() is Gather selectedActionableGatherAction && !selectedActionableGatherAction.Completed())
                 {
                     var gatherActionText = new FormattedText($"Gathering: {selectedActionableGatherAction.AmountCarried}/{selectedActionableGatherAction.AmountCarriedMax} ({selectedActionableGatherAction.Resource.Type.ToString()})", cultureInfo, flowDirection, typeface, 10d, foregroundBrush, pixelsPerDip);
                     dc.DrawText(gatherActionText, new Point(rect.X + xOffset, rect.Y + yOffset));
-                    //yOffset += gatherActionText.Height;
+                    yOffset += gatherActionText.Height;
                 }
 
                 if (selectedBaseGameObject is BaseResource selectedBaseResource)
                 {
                     var hitpointText = new FormattedText($"Resources: {selectedBaseResource.Amount}/{selectedBaseResource.AmountMax} ({selectedBaseResource.Type.ToString()})", cultureInfo, flowDirection, typeface, 10d, foregroundBrush, pixelsPerDip);
                     dc.DrawText(hitpointText, new Point(rect.X + xOffset, rect.Y + yOffset));
+                    yOffset += hitpointText.Height;
+                }
+
+                if (selectedBaseGameObject is IConstructable selectedConstructable && selectedConstructable.GetConstructionTime() > 0)
+                {
+                    var constructionTimeText = new FormattedText($"Constructing: {((selectedConstructable.GetConstructionTimeTotal() - selectedConstructable.GetConstructionTime()) / selectedConstructable.GetConstructionTimeTotal() * 100).ToString("0.00")}% ", cultureInfo, flowDirection, typeface, 10d, foregroundBrush, pixelsPerDip);
+                    dc.DrawText(constructionTimeText, new Point(rect.X + xOffset, rect.Y + yOffset));
                     //yOffset += hitpointText.Height;
                 }
             }

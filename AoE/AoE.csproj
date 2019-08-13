@@ -58,10 +58,12 @@
     </ApplicationDefinition>
     <Compile Include="Actions\Attack.cs" />
     <Compile Include="Actions\BaseAction.cs" />
+    <Compile Include="Actions\Build.cs" />
     <Compile Include="Actions\Gather.cs" />
     <Compile Include="Actions\Move.cs" />
     <Compile Include="GameObjects\BaseGameObject.cs" />
     <Compile Include="GameObjects\Buildings\BaseBuilding.cs" />
+    <Compile Include="GameObjects\Buildings\IConstructable.cs" />
     <Compile Include="GameObjects\Buildings\Storage\Mill.cs" />
     <Compile Include="GameObjects\Buildings\Storage\MiningCamp.cs" />
     <Compile Include="GameObjects\Buildings\Storage\LumberCamp.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="GameObjects\Resources\GoldOre.cs" />
     <Compile Include="GameObjects\Resources\Rocks.cs" />
     <Compile Include="GameObjects\Resources\Tree.cs" />
+    <Compile Include="GameObjects\Units\IBuilder.cs" />
     <Compile Include="GameObjects\Units\IGatherer.cs" />
     <Compile Include="GameObjects\Units\IMoveable.cs" />
     <Compile Include="Player.cs" />

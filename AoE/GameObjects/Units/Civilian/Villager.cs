@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace AoE.GameObjects.Units.Civilian
 {
-    class Villager : BaseUnit, IGatherer
+    class Villager : BaseUnit, IGatherer, IBuilder
     {
         public Villager(Vector position, Player owner) : base(position, 18f, 18f, "Villager", 25, 3, 0, 0f, 2.03f, 0, 0, 0.8f, 4, "Villager.png", owner)
         {
@@ -17,6 +17,11 @@ namespace AoE.GameObjects.Units.Civilian
         public void Gather(BaseResource resource, List<BaseResource> resources, List<BaseBuilding> buildings)
         {
             action = new Gather(this, resource, resources, buildings);
+        }
+
+        public void Build(IConstructable building)
+        {
+            action = new Build(this, building);
         }
     }
 }

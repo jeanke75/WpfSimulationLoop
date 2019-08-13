@@ -137,6 +137,7 @@ namespace AoE.Actions
             var distanceToClosest = double.MaxValue;
             foreach (BaseBuilding building in Buildings)
             {
+                if (building is IConstructable constructableBuilding && constructableBuilding.GetConstructionTime() > 0) continue; // If the building is not finished skip
                 if (building.GetOwner() == Unit.GetOwner() && building is IStorage storage && storage.CanStore(Resource.Type))
                 {
                     var distance = Unit.Distance(building) / MainWindow.tilesize;

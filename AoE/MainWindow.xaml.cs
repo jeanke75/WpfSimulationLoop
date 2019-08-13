@@ -77,7 +77,7 @@ namespace AoE
                 (units[i * 3 + 2] as IGatherer).Gather(resources[4], resources, buildings);
             }
 
-            units.Add(new Archer(new Vector((random.NextDouble() + 1) * tilesize + 30, 200), players[1]));
+            units.Add(new Archer(new Vector((random.NextDouble() + 1) * tilesize + 30, 200), players[0]));
         }
 
         public override void Update(float dt)
@@ -115,33 +115,55 @@ namespace AoE
                             }
                         }
 
-                        if (targetGameObject is IDestroyable targetDestroyable)
+                        // Can it be owned?
+                        if (targetGameObject is IOwnable ownableTarget)
                         {
-                            if (targetDestroyable != selectedBaseUnit)
+                            // Is it our own?
+                            if (ownableTarget.GetOwner() == player)
                             {
-                                if (targetDestroyable is IOwnable targetOwnableDestroyable)
+                                // Is it an unfinished constructable?
+                                if (targetGameObject is IConstructable targetOwnableConstructable && targetOwnableConstructable.GetConstructionTime() > 0)
                                 {
-                                    // If it can be owned, only attack if it's not owned by the player
-                                    if (targetOwnableDestroyable.GetOwner() != player)
+                                    // Is the selected unit a builder?
+                                    if (selectedGameObject is IBuilder selectedBuilder)
                                     {
-                                        selectedBaseUnit.Attack(targetDestroyable, units);
+                                        selectedBuilder.Build(targetOwnableConstructable);
                                     }
                                 }
-                                else
+                            }
+                            // Is it an enemy destroyable?
+                            else if (targetGameObject is IDestroyable targetOwnableDestroyable)
+                            {
+                                // Does our selected unit have combat skills?
+                                if (selectedBaseUnit is ICombat selectedCombatUnit)
                                 {
-                                    selectedBaseUnit.Attack(targetDestroyable, units);
+                                    selectedCombatUnit.Attack(targetOwnableDestroyable, units);
                                 }
                             }
                         }
-                        else if (targetGameObject is BaseResource targetBaseResource)
+                        else
                         {
-                            if (selectedBaseUnit is IGatherer selectedGatherer)
-                                selectedGatherer.Gather(targetBaseResource, resources, buildings);
-                        }
-                        else if (targetGameObject == null)
-                        {
-                            if (selectedBaseUnit is IMoveable selectedMoveable)
-                                selectedMoveable.MoveTo(new Vector(mousePos.X, mousePos.Y));
+                            // Is it a destroyable object?
+                            if (targetGameObject is IDestroyable targetNeutralDestroyable)
+                            {
+                                // Does our selected unit have combat skills?
+                                if (selectedBaseUnit is ICombat selectedCombatUnit)
+                                {
+                                    selectedCombatUnit.Attack(targetNeutralDestroyable, units);
+                                }
+                            }
+                            else if (targetGameObject is BaseResource targetBaseResource)
+                            {
+                                // Is our selected unit a gatherer
+                                if (selectedBaseUnit is IGatherer selectedGatherer)
+                                    selectedGatherer.Gather(targetBaseResource, resources, buildings);
+                            }
+                            else if (targetGameObject == null)
+                            {
+                                // Is our selected unit moveable?
+                                if (selectedBaseUnit is IMoveable selectedMoveable)
+                                    selectedMoveable.MoveTo(new Vector(mousePos.X, mousePos.Y));
+                            }
                         }
                     }
                 }
@@ -154,6 +176,17 @@ namespace AoE
                 {
                     resources.Remove(resource);
                     if (selectedGameObject == resource)
+                        selectedGameObject = null;
+                }
+            }
+
+            for (int i = buildings.Count - 1; i >= 0; i--)
+            {
+                var building = buildings[i];
+                if (building.GetHitPoints() == 0)
+                {
+                    buildings.Remove(building);
+                    if (selectedGameObject == building)
                         selectedGameObject = null;
                 }
             }
