@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AoE.GameObjects.Resources;
+using System.Collections.Generic;
 using System.Windows;
-using AoE.GameObjects.Resources;
 
 namespace AoE.GameObjects.Buildings
 {

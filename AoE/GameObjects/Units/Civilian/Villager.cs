@@ -14,14 +14,18 @@ namespace AoE.GameObjects.Units.Civilian
             AttackBonuses.Add(ArmorType.Building, 3);
         }
 
+        #region IGatherer
         public void Gather(BaseResource resource, List<BaseResource> resources, List<BaseBuilding> buildings)
         {
             action = new Gather(this, resource, resources, buildings);
         }
+        #endregion
 
+        #region IBuilder
         public void Build(IConstructable building)
         {
             action = new Build(this, building);
         }
+        #endregion
     }
 }
