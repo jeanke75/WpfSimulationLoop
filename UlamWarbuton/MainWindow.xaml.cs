@@ -20,11 +20,6 @@ namespace UlamWarbuton
         private bool[,] newState;
         private Queue<Cell> cellsToCheck;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
         public override void Initialize()
         {
             var size = (iterations * 2 + 1) * cellSize;

@@ -29,11 +29,6 @@ namespace FlappyBird
         private bool gameOver;
         private FormattedText gameOverText;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
         public override void Initialize()
         {
             SetBackgroundColor(Colors.LightBlue);

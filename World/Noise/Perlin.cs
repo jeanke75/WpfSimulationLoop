@@ -103,7 +103,7 @@ namespace World.Noise
             {
                 for (int j = 0; j < height; j++)
                 {
-                    perlinNoise[i,j] /= totalAmplitude;
+                    perlinNoise[i, j] /= totalAmplitude;
                 }
             }
 

@@ -1,5 +1,4 @@
-﻿using DrawingBase;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 
 namespace FlappyBird

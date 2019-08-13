@@ -22,11 +22,6 @@ namespace Raycasting2D
         private readonly int sceneHeight = 400;
         Point prevPos;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
         public override void Initialize()
         {
             SetResolution(sceneWidth * 3, sceneHeight);

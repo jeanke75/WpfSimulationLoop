@@ -14,11 +14,6 @@ namespace Flocking
         public static Random random = new Random();
         private List<Boid> boids = new List<Boid>();
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
         public override void Initialize()
         {
             for (int i = 0; i < 50; i++)
@@ -43,7 +38,7 @@ namespace Flocking
                     boid.position.Y = 0;
                 Boid copy = boid.Flock(boids);
                 copy.Update(dt);
-                
+
                 updatedBoids.Add(copy);
             }
             boids = updatedBoids;

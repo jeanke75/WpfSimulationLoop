@@ -36,7 +36,7 @@ namespace DrawingExample.Models
             dc.Pop();
 
             // draw orbiting points
-            var sections = Size/4f;
+            var sections = Size / 4f;
             var sectionAngle = 120 / sections;
             var pointSize = 1d;
             for (int i = 0; i < sections; i++)

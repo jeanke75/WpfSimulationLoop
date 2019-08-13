@@ -27,7 +27,7 @@ namespace Raycasting2D
             rayPen.Freeze();
             collisionPointBrush.Freeze();
         }
-        
+
         public void Update(Boundary[] boundaries)
         {
             // Add a POI for both edgepoints of a boundary
@@ -37,7 +37,7 @@ namespace Raycasting2D
                 pointsOfInterest.Add(b.p1);
                 pointsOfInterest.Add(b.p2);
             }
-            
+
             // Add rays for each POI
             rays.Clear();
             foreach (Point p in pointsOfInterest)

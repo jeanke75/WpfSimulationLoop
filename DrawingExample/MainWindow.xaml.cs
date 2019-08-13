@@ -1,9 +1,9 @@
-﻿using System;
+﻿using DrawingBase;
+using DrawingExample.Models;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
-using DrawingBase;
-using DrawingExample.Models;
 
 namespace DrawingExample
 {
@@ -17,7 +17,6 @@ namespace DrawingExample
 
         public MainWindow()
         {
-            InitializeComponent();
             entities = new List<Entity>();
         }
 
@@ -45,7 +44,7 @@ namespace DrawingExample
 
         public override void Cleanup()
         {
-            
+
         }
 
         public override void Update(float dt)

@@ -41,13 +41,8 @@ namespace Tetris
         private readonly Brush infoTextBrush = Brushes.Black;
         private readonly Brush infoBoxBrush = Brushes.DarkGray;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
-
         public override void Initialize()
-        {            
+        {
             random = new Random();
 
             // Add tiles
@@ -107,7 +102,7 @@ namespace Tetris
                 else
                 {
                     // Move the shape left/right
-                    if (InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Pressed )
+                    if (InputHelper.Keyboard.GetPressedState(Key.Left) == ButtonState.Pressed)
                     {
                         pos.X--;
                         if (HasCollision()) pos.X++;
@@ -123,7 +118,7 @@ namespace Tetris
                         currentShape.Rotate();
                         if (HasCollision()) currentShape.UndoRotate();
                     }
-                    
+
                     framesUntillDrop--;
                     if (framesUntillDrop == 0) // Drop the shape
                     {
@@ -196,7 +191,7 @@ namespace Tetris
             dc.PushTransform(new TranslateTransform(playFieldWidth, 0));
             // Draw info background
             dc.DrawRectangle(infoBackgroundBrush, null, new Rect(0, 0, infoWidth, GetHeight()));
-            
+
             var maxScoreWidth = new FormattedText(int.MaxValue.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 20d, infoTextBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip).Width;
             var scoreAndLinesBoxWidth = maxScoreWidth + (infoWidth - maxScoreWidth) / 10;
             // Draw the scores and lines in a box

@@ -53,7 +53,7 @@ namespace FractalTrees
                     dc.DrawEllipse(leafBrushes[leafBrushId], null, end, 5, 3);
                 }
             }
-                
+
             if (branches != null)
             {
                 foreach (Branch b in branches)
@@ -86,7 +86,7 @@ namespace FractalTrees
             else
             {
                 bool grown = false;
-                foreach(Branch b in branches)
+                foreach (Branch b in branches)
                 {
                     bool subbranchGrown = b.Grow();
                     grown = grown || subbranchGrown;

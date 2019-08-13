@@ -7,7 +7,7 @@ namespace DrawingExample.Models
     {
         public Circle(Vector position) : base(position)
         {
-            var collection = new GradientStopCollection 
+            var collection = new GradientStopCollection
             {
                 new GradientStop(Colors.DarkRed, 1/8f),
                 new GradientStop(Colors.DarkOrange, 2/8f),

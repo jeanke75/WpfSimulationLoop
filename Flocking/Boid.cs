@@ -50,7 +50,7 @@ namespace Flocking
             var direc = velocity.SetMagnitude(20);
             dc.DrawLine(new Pen(Brushes.White, 1), new Point(0, 0), new Point(direc.X, direc.Y));
             dc.DrawRectangle(Brushes.Red, null, new Rect(new Point(-1.5, -1.5), new Size(3, 3)));
-            dc.DrawRectangle(Brushes.Green, null, new Rect(new Point(direc.X-2.5, direc.Y-2.5), new Size(5, 5)));
+            dc.DrawRectangle(Brushes.Green, null, new Rect(new Point(direc.X - 2.5, direc.Y - 2.5), new Size(5, 5)));
             dc.Pop();
         }
 
