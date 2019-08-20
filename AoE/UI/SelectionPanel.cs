@@ -12,7 +12,6 @@ namespace AoE.UI
     class SelectionPanel
     {
         private readonly Rect rect;
-        private readonly Brush backgroundBrush;
 
         private readonly CultureInfo cultureInfo;
         private readonly FlowDirection flowDirection;
@@ -22,9 +21,7 @@ namespace AoE.UI
 
         public SelectionPanel(DrawingWindowBase window)
         {
-            rect = new Rect(0, window.GetHeight() - 100, window.GetWidth(), 100);
-            backgroundBrush = Brushes.SandyBrown;
-            backgroundBrush.Freeze();
+            rect = new Rect(0, window.GetHeight() - 90, window.GetWidth(), 100);
 
             cultureInfo = CultureInfo.CurrentCulture;
             flowDirection = FlowDirection.LeftToRight;
@@ -35,9 +32,6 @@ namespace AoE.UI
 
         public void Draw(DrawingContext dc, ISelectable selectable)
         {
-            // Draw panel background
-            dc.DrawRectangle(Brushes.SandyBrown, null, rect);
-
             // Draw selected unit info
             if (selectable is BaseGameObject selectedBaseGameObject)
             {

@@ -22,21 +22,21 @@ namespace AoE.UI
 
         public PlayerInfoPanel(DrawingWindowBase window)
         {
-            rect = new Rect(0, 0, window.GetWidth(), 20);
-            backgroundBrush = Brushes.SandyBrown;
+            rect = new Rect(6, 5, 500, 20);
+            backgroundBrush = Brushes.Black;
             backgroundBrush.Freeze();
 
             cultureInfo = CultureInfo.CurrentCulture;
             flowDirection = FlowDirection.LeftToRight;
             typeface = new Typeface("Georgia");
-            foregroundBrush = Brushes.Black;
+            foregroundBrush = Brushes.White;
             pixelsPerDip = VisualTreeHelper.GetDpi(window).PixelsPerDip;
         }
 
         public void Draw(DrawingContext dc, Player player, List<BaseUnit> units)
         {
             // Draw panel background
-            dc.DrawRectangle(Brushes.SandyBrown, null, rect);
+            dc.DrawRectangle(backgroundBrush, null, rect);
 
             var xOffset = 8d;
             var yOffset = 5d;
@@ -59,7 +59,7 @@ namespace AoE.UI
             xOffset += 100;
 
             // Draw unit counter
-            var unitsText = new FormattedText($"Units: {units.Count(x => x.GetOwner() == player)}", cultureInfo, flowDirection, typeface, 10d, foregroundBrush, pixelsPerDip);
+            var unitsText = new FormattedText($"Units: {units.Count(x => x.GetOwner() == player)}/???", cultureInfo, flowDirection, typeface, 10d, foregroundBrush, pixelsPerDip);
             dc.DrawText(unitsText, new Point(rect.X + xOffset, rect.Y + yOffset));
             //xOffset += 100;
         }

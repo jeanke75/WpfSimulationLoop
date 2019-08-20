@@ -5,6 +5,7 @@ using AoE.GameObjects.Resources;
 using AoE.GameObjects.Units;
 using AoE.GameObjects.Units.Archers;
 using AoE.GameObjects.Units.Civilian;
+using AoE.GameObjects.Units.Siege;
 using AoE.UI;
 using DrawingBase;
 using DrawingBase.Input;
@@ -26,24 +27,22 @@ namespace AoE
         public static readonly bool ShowAttackRange = true;
         public static readonly bool ShowTimeUntillAttack = true;
         public static readonly bool ShowGameObjectRadius = false;
-        readonly List<Player> players = new List<Player>();
-        readonly List<BaseUnit> units = new List<BaseUnit>();
-        readonly List<BaseResource> resources = new List<BaseResource>();
-        readonly List<BaseBuilding> buildings = new List<BaseBuilding>();
+        internal readonly List<Player> players = new List<Player>();
+        internal readonly List<BaseUnit> units = new List<BaseUnit>();
+        internal readonly List<BaseResource> resources = new List<BaseResource>();
+        internal readonly List<BaseBuilding> buildings = new List<BaseBuilding>();
 
-        Player player;
-        ISelectable selectedGameObject = null;
+        internal Player player;
+        internal ISelectable selectedGameObject = null;
 
-        private PlayerInfoPanel playerInfoPanel;
-        private SelectionPanel selectionPanel;
+        private UserInterface userInterface;
 
         public override void Initialize()
         {
             SetResolution(800, 600);
 
             // UI
-            playerInfoPanel = new PlayerInfoPanel(this);
-            selectionPanel = new SelectionPanel(this);
+            userInterface = new UserInterface(this);
 
             // Players
             for (uint i = 0; i < 2; i++)
@@ -54,12 +53,12 @@ namespace AoE
             player = players[0];
 
             // Add resources to the map
-            resources.Add(new Rocks(new Vector(100, 25)));
-            resources.Add(new Rocks(new Vector(116, 25)));
-            resources.Add(new Tree(new Vector(132, 25)));
-            resources.Add(new Tree(new Vector(148, 25)));
-            resources.Add(new GoldOre(new Vector(164, 25)));
-            resources.Add(new GoldOre(new Vector(180, 25)));
+            resources.Add(new Rocks(new Vector(100, 32)));
+            resources.Add(new Rocks(new Vector(116, 32)));
+            resources.Add(new Tree(new Vector(132, 32)));
+            resources.Add(new Tree(new Vector(148, 32)));
+            resources.Add(new GoldOre(new Vector(164, 32)));
+            resources.Add(new GoldOre(new Vector(180, 32)));
 
             // Add buildings to the map
             buildings.Add(new LumberCamp(10, 10, players[0]));
@@ -78,6 +77,7 @@ namespace AoE
             }
 
             units.Add(new Archer(new Vector((random.NextDouble() + 1) * tilesize + 30, 200), players[0]));
+            units.Add(new Mangonel(new Vector(GetWidth() - 100, GetHeight() / 2d), players[1]));
         }
 
         public override void Update(float dt)
@@ -244,8 +244,7 @@ namespace AoE
             }
 
             // Draw UI
-            playerInfoPanel.Draw(dc, player, units);
-            selectionPanel.Draw(dc, selectedGameObject);
+            userInterface.Draw(dc);
         }
 
         public override void Cleanup()

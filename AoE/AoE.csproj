@@ -108,6 +108,7 @@
     <Compile Include="GameObjects\Units\Civilian\Villager.cs" />
     <Compile Include="UI\PlayerInfoPanel.cs" />
     <Compile Include="UI\SelectionPanel.cs" />
+    <Compile Include="UI\UserInterface.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -233,6 +234,9 @@
   <ItemGroup>
     <Resource Include="Images\Resources\GoldOre.png" />
     <Resource Include="Images\Resources\Rocks.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\UI\UserInterface.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
