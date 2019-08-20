@@ -141,7 +141,7 @@ namespace AoE.GameObjects.Units
             {
                 if (unit.owner.Id == owner.Id || unit.HitPoints == 0) continue;
                 var distance = Distance(unit) / MainWindow.tilesize;
-                if (distance <= LineOfSight + Radius && distance < distanceToClosest)
+                if (distance <= LineOfSight && distance < distanceToClosest)
                 {
                     distanceToClosest = distance;
                     closestUnit = unit;

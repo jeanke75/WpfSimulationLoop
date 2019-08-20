@@ -49,11 +49,11 @@ namespace AoE.Actions
 
         private bool TargetInRange()
         {
-            var distance = (attacker as BaseGameObject).Distance(Target as BaseGameObject);
+            var distance = (attacker as BaseGameObject).Distance(Target as BaseGameObject) / MainWindow.tilesize;
             if (attacker is IRangedCombat rangedAttacker)
-                return distance >= rangedAttacker.GetAttackRangeMin() * MainWindow.tilesize && distance <= rangedAttacker.GetAttackRangeMax() * MainWindow.tilesize;
+                return distance >= rangedAttacker.GetAttackRangeMin() && distance <= rangedAttacker.GetAttackRangeMax();
             else
-                return distance <= 0.1f * MainWindow.tilesize;
+                return distance <= 0.1f;
         }
 
         private void DealDamage(IDestroyable target)
@@ -119,12 +119,12 @@ namespace AoE.Actions
             BaseGameObject targetObject = Target as BaseGameObject;
             if (attacker is IRangedCombat rangedAttacker)
             {
-                var distance = attackerObject.Distance(targetObject);
-                if (distance > rangedAttacker.GetAttackRangeMax() * MainWindow.tilesize)
+                var distance = attackerObject.Distance(targetObject) / MainWindow.tilesize;
+                if (distance > rangedAttacker.GetAttackRangeMax())
                 {
                     attackerObject.Position = attackerObject.Position.MoveTowards(targetObject.Position, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.tilesize);
                 }
-                else if (distance < rangedAttacker.GetAttackRangeMin() * MainWindow.tilesize)
+                else if (distance < rangedAttacker.GetAttackRangeMin())
                 {
                     // if the attacker is not targetted by it's target, move away from the target to attack
                     if (Target is IActionable actionableTarget && actionableTarget.GetAction() is Attack targetAttackAction && targetAttackAction.Target != rangedAttacker)
