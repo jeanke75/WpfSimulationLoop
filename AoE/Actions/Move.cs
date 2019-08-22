@@ -21,7 +21,7 @@ namespace AoE.Actions
             if (!Completed())
             {
                 BaseGameObject gameObject = moveableObject as BaseGameObject;
-                gameObject.Position = gameObject.Position.MoveTowards(position, dt, moveableObject.GetMovementSpeed() * MainWindow.tilesize);
+                gameObject.Position = gameObject.Position.MoveTowards(position, dt, moveableObject.GetMovementSpeed() * MainWindow.TileSize);
             }
         }
 

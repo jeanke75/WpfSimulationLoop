@@ -49,7 +49,7 @@ namespace AoE.Actions
 
         private bool TargetInRange()
         {
-            var distance = (attacker as BaseGameObject).Distance(Target as BaseGameObject) / MainWindow.tilesize;
+            var distance = (attacker as BaseGameObject).Distance(Target as BaseGameObject) / MainWindow.TileSize;
             if (attacker is IRangedCombat rangedAttacker)
                 return distance >= rangedAttacker.GetAttackRangeMin() && distance <= rangedAttacker.GetAttackRangeMax();
             else
@@ -58,7 +58,7 @@ namespace AoE.Actions
 
         private void DealDamage(IDestroyable target)
         {
-            if (attacker is IRangedCombat rangedCombat && MainWindow.random.NextDouble() > rangedCombat.GetAccuracy())
+            if (attacker is IRangedCombat rangedCombat && MainWindow.Random.NextDouble() > rangedCombat.GetAccuracy())
                 return;
 
             // Check if the target can defend itself
@@ -104,7 +104,7 @@ namespace AoE.Actions
             foreach (BaseUnit unit in units)
             {
                 var distanceToCenter = Math.Sqrt(Math.Pow(unit.Position.X - centerOfBlast.X, 2) + Math.Pow(unit.Position.Y - centerOfBlast.Y, 2));
-                if (distanceToCenter <= unit.GetBlastRadius() * MainWindow.tilesize)
+                if (distanceToCenter <= unit.GetBlastRadius() * MainWindow.TileSize)
                 {
                     unitsInBlast.Add(unit);
                 }
@@ -119,10 +119,10 @@ namespace AoE.Actions
             BaseGameObject targetObject = Target as BaseGameObject;
             if (attacker is IRangedCombat rangedAttacker)
             {
-                var distance = attackerObject.Distance(targetObject) / MainWindow.tilesize;
+                var distance = attackerObject.Distance(targetObject) / MainWindow.TileSize;
                 if (distance > rangedAttacker.GetAttackRangeMax())
                 {
-                    attackerObject.Position = attackerObject.Position.MoveTowards(targetObject.Position, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.tilesize);
+                    attackerObject.Position = attackerObject.Position.MoveTowards(targetObject.Position, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.TileSize);
                 }
                 else if (distance < rangedAttacker.GetAttackRangeMin())
                 {
@@ -130,15 +130,15 @@ namespace AoE.Actions
                     if (Target is IActionable actionableTarget && actionableTarget.GetAction() is Attack targetAttackAction && targetAttackAction.Target != rangedAttacker)
                     {
                         var direction = targetObject.Position - attackerObject.Position;
-                        direction.SetMagnitude(rangedAttacker.GetAttackRangeMin() * MainWindow.tilesize + targetObject.Radius + attackerObject.Radius);
+                        direction.SetMagnitude(rangedAttacker.GetAttackRangeMin() * MainWindow.TileSize + targetObject.Radius + attackerObject.Radius);
                         var newPosition = attackerObject.Position - direction;
-                        attackerObject.Position = attackerObject.Position.MoveTowards(newPosition, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.tilesize);
+                        attackerObject.Position = attackerObject.Position.MoveTowards(newPosition, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.TileSize);
                     }
                 }
             }
             else
             {
-                attackerObject.Position = attackerObject.Position.MoveTowards(targetObject.Position, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.tilesize);
+                attackerObject.Position = attackerObject.Position.MoveTowards(targetObject.Position, dt, (attacker as IMoveable).GetMovementSpeed() * MainWindow.TileSize);
             }
         }
     }

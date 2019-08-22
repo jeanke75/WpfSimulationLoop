@@ -61,7 +61,7 @@ namespace AoE.Actions
                     // Check if the resource has been depleted
                     if (Resource.Amount > 0)
                     {
-                        var distance = Unit.Distance(Resource) / MainWindow.tilesize;
+                        var distance = Unit.Distance(Resource) / MainWindow.TileSize;
                         if (distance < 0.1f)
                         {
                             TimeUntillNextGather -= dt;
@@ -75,7 +75,7 @@ namespace AoE.Actions
                         }
                         else
                         {
-                            Unit.Position = Unit.Position.MoveTowards(Resource.Position, dt, Unit.GetMovementSpeed() * MainWindow.tilesize);
+                            Unit.Position = Unit.Position.MoveTowards(Resource.Position, dt, Unit.GetMovementSpeed() * MainWindow.TileSize);
 
                             // Reset timer
                             TimeUntillNextGather = GatherSpeed;
@@ -140,7 +140,7 @@ namespace AoE.Actions
                 if (building is IConstructable constructableBuilding && constructableBuilding.GetConstructionTime() > 0) continue; // If the building is not finished skip
                 if (building.GetOwner() == Unit.GetOwner() && building is IStorage storage && storage.CanStore(Resource.Type))
                 {
-                    var distance = Unit.Distance(building) / MainWindow.tilesize;
+                    var distance = Unit.Distance(building) / MainWindow.TileSize;
                     if (distance < distanceToClosest)
                     {
                         closestStorage = building;
@@ -162,7 +162,7 @@ namespace AoE.Actions
                 else
                 {
                     // Otherwise move towards it
-                    Unit.Position = Unit.Position.MoveTowards(closestStorage.Position, dt, Unit.GetMovementSpeed() * MainWindow.tilesize);
+                    Unit.Position = Unit.Position.MoveTowards(closestStorage.Position, dt, Unit.GetMovementSpeed() * MainWindow.TileSize);
                 }
             }
         }

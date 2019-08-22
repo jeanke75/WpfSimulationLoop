@@ -42,10 +42,10 @@ namespace AoE.GameObjects.Units
             {
                 // min range
                 if (MinRange > 0)
-                    dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Position.X, Position.Y), Radius + MinRange * MainWindow.tilesize, Radius + MinRange * MainWindow.tilesize);
+                    dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Position.X, Position.Y), Radius + MinRange * MainWindow.TileSize, Radius + MinRange * MainWindow.TileSize);
 
                 // max range
-                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Position.X, Position.Y), Radius + MaxRange * MainWindow.tilesize, Radius + MaxRange * MainWindow.tilesize);
+                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point(Position.X, Position.Y), Radius + MaxRange * MainWindow.TileSize, Radius + MaxRange * MainWindow.TileSize);
             }
 
             // Draw projectile

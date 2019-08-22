@@ -41,7 +41,7 @@ namespace AoE.UI
 
         public void Update()
         {
-            if (window.selectedGameObject is IOwnable && window.selectedGameObject is IBuilder)
+            if (window.SelectedGameObject is IOwnable && window.SelectedGameObject is IBuilder)
             {
                 bool buttonClicked = false;
                 foreach (BuilderButton button in buttons)
@@ -61,7 +61,7 @@ namespace AoE.UI
                     {
                         // Pay the resources
                         foreach (KeyValuePair<ResourceType, int> resourceCost in SelectedConstructable.GetConstructionCost())
-                            window.player.SetResource(resourceCost.Key, window.player.GetResource(resourceCost.Key) - resourceCost.Value);
+                            window.Player.SetResource(resourceCost.Key, window.Player.GetResource(resourceCost.Key) - resourceCost.Value);
 
                         BaseBuilding building = SelectedConstructable as BaseBuilding;
 
@@ -69,13 +69,13 @@ namespace AoE.UI
                         building.Position = GetTilePositionFromMouse();
 
                         // Set the owner
-                        building.SetOwner(window.player);
+                        building.SetOwner(window.Player);
 
                         // Place the building
-                        window.buildings.Add(building);
+                        window.Buildings.Add(building);
 
                         // Tell the selected builder to start working on it
-                        IBuilder builder = window.selectedGameObject as IBuilder;
+                        IBuilder builder = window.SelectedGameObject as IBuilder;
                         builder.Build(SelectedConstructable);
 
                         // Reset the build option
@@ -91,7 +91,7 @@ namespace AoE.UI
 
         public void Draw(DrawingContext dc)
         {
-            if (window.selectedGameObject is IOwnable && window.selectedGameObject is IBuilder)
+            if (window.SelectedGameObject is IOwnable && window.SelectedGameObject is IBuilder)
             {
                 foreach (BuilderButton button in buttons)
                     button.Draw(dc);
@@ -112,8 +112,8 @@ namespace AoE.UI
         private Vector GetTilePositionFromMouse()
         {
             var mousePos = InputHelper.Mouse.GetPosition();
-            double x = (int)(mousePos.X / MainWindow.tilesize) * MainWindow.tilesize;
-            double y = (int)(mousePos.Y / MainWindow.tilesize) * MainWindow.tilesize;
+            double x = (int)(mousePos.X / MainWindow.TileSize) * MainWindow.TileSize;
+            double y = (int)(mousePos.Y / MainWindow.TileSize) * MainWindow.TileSize;
             return new Vector(x, y);
         }
 
@@ -126,7 +126,7 @@ namespace AoE.UI
         {
             foreach (KeyValuePair<ResourceType, int> resourceCost in cost)
             {
-                if (window.player.GetResource(resourceCost.Key) < resourceCost.Value)
+                if (window.Player.GetResource(resourceCost.Key) < resourceCost.Value)
                 {
                     return false;
                 }

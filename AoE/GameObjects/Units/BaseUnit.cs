@@ -120,11 +120,11 @@ namespace AoE.GameObjects.Units
 
             // Draw blast radius
             if (MainWindow.ShowAttackRange && action is Attack attackAction && attackAction.Target != null && BlastRadius > 0)
-                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point((attackAction.Target as BaseGameObject).Position.X, (attackAction.Target as BaseGameObject).Position.Y), BlastRadius * MainWindow.tilesize, BlastRadius * MainWindow.tilesize);
+                dc.DrawEllipse(null, new Pen(Brushes.Red, 1), new Point((attackAction.Target as BaseGameObject).Position.X, (attackAction.Target as BaseGameObject).Position.Y), BlastRadius * MainWindow.TileSize, BlastRadius * MainWindow.TileSize);
 
             // Draw line of sight
             if (MainWindow.ShowLineOfSight)
-                dc.DrawEllipse(null, new Pen(Brushes.Yellow, 1), new Point(Position.X, Position.Y), Radius + LineOfSight * MainWindow.tilesize, Radius + LineOfSight * MainWindow.tilesize);
+                dc.DrawEllipse(null, new Pen(Brushes.Yellow, 1), new Point(Position.X, Position.Y), Radius + LineOfSight * MainWindow.TileSize, Radius + LineOfSight * MainWindow.TileSize);
 
             // Draw health
             dc.DrawRectangle(Brushes.Red, null, new Rect(unitRect.X, unitRect.Y - 10, HitPoints / (float)HitPointsMax * Width, 5));
@@ -140,7 +140,7 @@ namespace AoE.GameObjects.Units
             foreach (BaseUnit unit in units)
             {
                 if (unit.owner.Id == owner.Id || unit.HitPoints == 0) continue;
-                var distance = Distance(unit) / MainWindow.tilesize;
+                var distance = Distance(unit) / MainWindow.TileSize;
                 if (distance <= LineOfSight && distance < distanceToClosest)
                 {
                     distanceToClosest = distance;

@@ -34,9 +34,9 @@ namespace AoE.UI
         public void Draw(DrawingContext dc)
         {
             dc.DrawImage(imageSource, rect);
-            playerInfoPanel.Draw(dc, window.player, window.units);
+            playerInfoPanel.Draw(dc, window.Player, window.Units);
             builderPanel.Draw(dc);
-            selectionPanel.Draw(dc, window.selectedGameObject);
+            selectionPanel.Draw(dc, window.SelectedGameObject);
         }
     }
 }

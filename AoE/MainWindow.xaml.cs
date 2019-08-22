@@ -21,19 +21,19 @@ namespace AoE
     /// </summary>
     public partial class MainWindow : DrawingWindowBase
     {
-        public static readonly Random random = new Random();
-        public static readonly double tilesize = 10f;
+        public static readonly Random Random = new Random();
+        public static readonly double TileSize = 10f;
         public static readonly bool ShowLineOfSight = true;
         public static readonly bool ShowAttackRange = true;
         public static readonly bool ShowTimeUntillAttack = true;
         public static readonly bool ShowGameObjectRadius = false;
-        internal readonly List<Player> players = new List<Player>();
-        internal readonly List<BaseUnit> units = new List<BaseUnit>();
+        internal readonly List<Player> Players = new List<Player>();
+        internal readonly List<BaseUnit> Units = new List<BaseUnit>();
         internal readonly List<BaseResource> resources = new List<BaseResource>();
-        internal readonly List<BaseBuilding> buildings = new List<BaseBuilding>();
+        internal readonly List<BaseBuilding> Buildings = new List<BaseBuilding>();
 
-        internal Player player;
-        internal ISelectable selectedGameObject = null;
+        internal Player Player;
+        internal ISelectable SelectedGameObject = null;
 
         private UserInterface userInterface;
 
@@ -47,10 +47,10 @@ namespace AoE
             // Players
             for (uint i = 0; i < 2; i++)
             {
-                players.Add(new Player(i, Color.FromRgb((byte)random.Next(50, 255), (byte)random.Next(50, 255), (byte)random.Next(50, 255))));
+                Players.Add(new Player(i, Color.FromRgb((byte)Random.Next(50, 255), (byte)Random.Next(50, 255), (byte)Random.Next(50, 255))));
             }
 
-            player = players[0];
+            Player = Players[0];
 
             // Add resources to the map
             resources.Add(new Rocks(new Vector(100, 32)));
@@ -61,23 +61,23 @@ namespace AoE
             resources.Add(new GoldOre(new Vector(180, 32)));
 
             // Add buildings to the map
-            buildings.Add(new LumberCamp(10, 10, players[0]));
-            buildings.Add(new MiningCamp(12, 10, players[0]));
-            buildings.Add(new Mill(14, 10, players[1]));
+            Buildings.Add(new LumberCamp(10, 10, Players[0]));
+            Buildings.Add(new MiningCamp(12, 10, Players[0]));
+            Buildings.Add(new Mill(14, 10, Players[1]));
 
             // Add units to the map
             for (int i = 0; i < 2; i++)
             {
-                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
-                (units[i * 3] as IGatherer).Gather(resources[0], resources, buildings);
-                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
-                (units[i * 3 + 1] as IGatherer).Gather(resources[2], resources, buildings);
-                units.Add(new Villager(new Vector((random.NextDouble() + 1) * tilesize, 200 + i * 30), players[0]));
-                (units[i * 3 + 2] as IGatherer).Gather(resources[4], resources, buildings);
+                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * 30), Players[0]));
+                (Units[i * 3] as IGatherer).Gather(resources[0], resources, Buildings);
+                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * 30), Players[0]));
+                (Units[i * 3 + 1] as IGatherer).Gather(resources[2], resources, Buildings);
+                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * 30), Players[0]));
+                (Units[i * 3 + 2] as IGatherer).Gather(resources[4], resources, Buildings);
             }
 
-            units.Add(new Archer(new Vector((random.NextDouble() + 1) * tilesize + 30, 200), players[0]));
-            units.Add(new Mangonel(new Vector(GetWidth() - 100, GetHeight() / 2d), players[1]));
+            Units.Add(new Archer(new Vector((Random.NextDouble() + 1) * TileSize + 30, 200), Players[0]));
+            Units.Add(new Mangonel(new Vector(GetWidth() - 100, GetHeight() / 2d), Players[1]));
         }
 
         public override void Update(float dt)
@@ -90,13 +90,13 @@ namespace AoE
             {
                 if (userInterface.builderPanel.SelectedConstructable == null)
                 {
-                    selectedGameObject = null;
+                    SelectedGameObject = null;
                     var mousePos = InputHelper.Mouse.GetPosition();
                     foreach (BaseGameObject gameObject in GetAllGameObjects())
                     {
                         if (gameObject is ISelectable selectableUnit && gameObject.MouseOver(mousePos))
                         {
-                            selectedGameObject = selectableUnit;
+                            SelectedGameObject = selectableUnit;
                             break;
                         }
                     }
@@ -105,9 +105,9 @@ namespace AoE
             else if (InputHelper.Mouse.GetState(MouseButton.Right) == ButtonState.Pressed)
             {
                 // Right-click actions are only available for game objects owned by the player
-                if (selectedGameObject is IOwnable selectedOwnedGameObject && selectedOwnedGameObject.GetOwner() == player)
+                if (SelectedGameObject is IOwnable selectedOwnedGameObject && selectedOwnedGameObject.GetOwner() == Player)
                 {
-                    if (selectedGameObject is BaseUnit selectedBaseUnit)
+                    if (SelectedGameObject is BaseUnit selectedBaseUnit)
                     {
                         // Reset the selected constructable on the preview
                         userInterface.builderPanel.SelectedConstructable = null;
@@ -127,13 +127,13 @@ namespace AoE
                         if (targetGameObject is IOwnable ownableTarget)
                         {
                             // Is it our own?
-                            if (ownableTarget.GetOwner() == player)
+                            if (ownableTarget.GetOwner() == Player)
                             {
                                 // Is it an unfinished constructable?
                                 if (targetGameObject is IConstructable targetOwnableConstructable && targetOwnableConstructable.GetConstructionTime() > 0)
                                 {
                                     // Is the selected unit a builder?
-                                    if (selectedGameObject is IBuilder selectedBuilder)
+                                    if (SelectedGameObject is IBuilder selectedBuilder)
                                     {
                                         selectedBuilder.Build(targetOwnableConstructable);
                                     }
@@ -145,7 +145,7 @@ namespace AoE
                                 // Does our selected unit have combat skills?
                                 if (selectedBaseUnit is ICombat selectedCombatUnit)
                                 {
-                                    selectedCombatUnit.Attack(targetOwnableDestroyable, units);
+                                    selectedCombatUnit.Attack(targetOwnableDestroyable, Units);
                                 }
                             }
                         }
@@ -157,14 +157,14 @@ namespace AoE
                                 // Does our selected unit have combat skills?
                                 if (selectedBaseUnit is ICombat selectedCombatUnit)
                                 {
-                                    selectedCombatUnit.Attack(targetNeutralDestroyable, units);
+                                    selectedCombatUnit.Attack(targetNeutralDestroyable, Units);
                                 }
                             }
                             else if (targetGameObject is BaseResource targetBaseResource)
                             {
                                 // Is our selected unit a gatherer
                                 if (selectedBaseUnit is IGatherer selectedGatherer)
-                                    selectedGatherer.Gather(targetBaseResource, resources, buildings);
+                                    selectedGatherer.Gather(targetBaseResource, resources, Buildings);
                             }
                             else if (targetGameObject == null)
                             {
@@ -183,32 +183,32 @@ namespace AoE
                 if (resource.Amount == 0)
                 {
                     resources.Remove(resource);
-                    if (selectedGameObject == resource)
-                        selectedGameObject = null;
+                    if (SelectedGameObject == resource)
+                        SelectedGameObject = null;
                 }
             }
 
-            for (int i = buildings.Count - 1; i >= 0; i--)
+            for (int i = Buildings.Count - 1; i >= 0; i--)
             {
-                var building = buildings[i];
+                var building = Buildings[i];
                 if (building.GetHitPoints() == 0)
                 {
-                    buildings.Remove(building);
-                    if (selectedGameObject == building)
-                        selectedGameObject = null;
+                    Buildings.Remove(building);
+                    if (SelectedGameObject == building)
+                        SelectedGameObject = null;
                 }
             }
 
-            for (int i = units.Count - 1; i >= 0; i--)
+            for (int i = Units.Count - 1; i >= 0; i--)
             {
-                var unit = units[i];
+                var unit = Units[i];
                 if (unit.GetHitPoints() > 0)
-                    unit.Update(dt, units);
+                    unit.Update(dt, Units);
                 else
                 {
-                    units.Remove(unit);
-                    if (selectedGameObject == unit)
-                        selectedGameObject = null;
+                    Units.Remove(unit);
+                    if (SelectedGameObject == unit)
+                        SelectedGameObject = null;
                 }
             }
         }
@@ -221,31 +221,31 @@ namespace AoE
                 resource.Draw(dc);
 
                 // Draw outline if selected
-                if (resource == selectedGameObject)
+                if (resource == SelectedGameObject)
                 {
                     dc.DrawRectangle(null, new Pen(Brushes.White, 1), resource.Rect);
                 }
             }
 
             // Draw buildings
-            foreach (BaseBuilding building in buildings)
+            foreach (BaseBuilding building in Buildings)
             {
                 building.Draw(dc);
 
                 // Draw outline if selected
-                if (building == selectedGameObject)
+                if (building == SelectedGameObject)
                 {
                     dc.DrawRectangle(null, new Pen(Brushes.White, 1), building.Rect);
                 }
             }
 
             // Draw units
-            foreach (BaseUnit unit in units)
+            foreach (BaseUnit unit in Units)
             {
-                unit.Draw(dc, players);
+                unit.Draw(dc, Players);
 
                 // Draw outline if selected
-                if (unit == selectedGameObject)
+                if (unit == SelectedGameObject)
                 {
                     dc.DrawRectangle(null, new Pen(Brushes.White, 1), unit.Rect);
                 }
@@ -262,9 +262,9 @@ namespace AoE
         private List<BaseGameObject> GetAllGameObjects()
         {
             var allGameObjects = new List<BaseGameObject>();
-            allGameObjects.AddRange(units);
+            allGameObjects.AddRange(Units);
             allGameObjects.AddRange(resources);
-            allGameObjects.AddRange(buildings);
+            allGameObjects.AddRange(Buildings);
             return allGameObjects;
         }
     }

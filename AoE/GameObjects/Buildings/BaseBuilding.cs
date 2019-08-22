@@ -46,7 +46,7 @@ namespace AoE.GameObjects.Buildings
         }
         private Player owner;
 
-        public BaseBuilding(int x, int y, int tilesWide, int tilesHigh, string name, int constructionTime, string imageId, Player owner) : base(new Vector(x * MainWindow.tilesize, y * MainWindow.tilesize), tilesWide * MainWindow.tilesize, tilesHigh * MainWindow.tilesize, name, "Buildings/" + imageId)
+        public BaseBuilding(int x, int y, int tilesWide, int tilesHigh, string name, int constructionTime, string imageId, Player owner) : base(new Vector(x * MainWindow.TileSize, y * MainWindow.TileSize), tilesWide * MainWindow.TileSize, tilesHigh * MainWindow.TileSize, name, "Buildings/" + imageId)
         {
             ConstructionCost = new Dictionary<ResourceType, int>();
             ConstructionTimeTotal = constructionTime >= 0 ? constructionTime : 0;

@@ -21,7 +21,7 @@ namespace AoE.Actions
             {
                 var builderObject = builder as BaseGameObject;
                 var buildingObject = building as BaseGameObject;
-                var distance = builderObject.Distance(building as BaseGameObject) / MainWindow.tilesize;
+                var distance = builderObject.Distance(building as BaseGameObject) / MainWindow.TileSize;
                 if (distance < 0.1f)
                 {
                     bool firstBuilder = !building.GetMultipleBuildersCheck();
@@ -31,7 +31,7 @@ namespace AoE.Actions
                 }
                 else
                 {
-                    builderObject.Position = builderObject.Position.MoveTowards(buildingObject.Position, dt, (builder as IMoveable).GetMovementSpeed() * MainWindow.tilesize);
+                    builderObject.Position = builderObject.Position.MoveTowards(buildingObject.Position, dt, (builder as IMoveable).GetMovementSpeed() * MainWindow.TileSize);
                 }
             }
         }
