@@ -6,6 +6,7 @@ namespace AoE.GameObjects.Buildings
 {
     class BaseBuilding : BaseGameObject, ISelectable, IConstructable, IDestroyable, IOwnable
     {
+        protected readonly Dictionary<ResourceType, int> ConstructionCost;
         private readonly float ConstructionTimeTotal;
         private float _constructionTime;
         private float ConstructionTime
@@ -45,9 +46,10 @@ namespace AoE.GameObjects.Buildings
         }
         private Player owner;
 
-        public BaseBuilding(int x, int y, int tilesWide, int tilesHigh, string name, string imageId, Player owner) : base(new Vector(x * MainWindow.tilesize, y * MainWindow.tilesize), tilesWide * MainWindow.tilesize, tilesHigh * MainWindow.tilesize, name, "Buildings/" + imageId)
+        public BaseBuilding(int x, int y, int tilesWide, int tilesHigh, string name, int constructionTime, string imageId, Player owner) : base(new Vector(x * MainWindow.tilesize, y * MainWindow.tilesize), tilesWide * MainWindow.tilesize, tilesHigh * MainWindow.tilesize, name, "Buildings/" + imageId)
         {
-            ConstructionTimeTotal = 15;
+            ConstructionCost = new Dictionary<ResourceType, int>();
+            ConstructionTimeTotal = constructionTime >= 0 ? constructionTime : 0;
             ConstructionTime = ConstructionTimeTotal;
             MultipleBuildersCheck = false;
 
@@ -63,14 +65,9 @@ namespace AoE.GameObjects.Buildings
         }
 
         #region IConstructable
-        public Dictionary<ResourceType, int> GetConstructionCost()
+        public virtual Dictionary<ResourceType, int> GetConstructionCost()
         {
-            return new Dictionary<ResourceType, int>
-            {
-                { ResourceType.Gold, 1 },
-                { ResourceType.Stone, 2 },
-                { ResourceType.Wood, 3 }
-            };
+            return ConstructionCost;
         }
 
         public float GetConstructionTimeTotal()

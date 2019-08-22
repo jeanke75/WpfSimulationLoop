@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,6 +82,7 @@
     <Compile Include="GameObjects\Units\IBuilder.cs" />
     <Compile Include="GameObjects\Units\IGatherer.cs" />
     <Compile Include="GameObjects\Units\IMoveable.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="GameObjects\Units\Siege\BatteringRam.cs" />
     <Compile Include="GameObjects\Units\Siege\BombardCannon.cs" />
@@ -106,6 +108,9 @@
     <Compile Include="GameObjects\Units\Infantry\Spearman.cs" />
     <Compile Include="GameObjects\Units\Infantry\EagleScout.cs" />
     <Compile Include="GameObjects\Units\Civilian\Villager.cs" />
+    <Compile Include="UI\BuilderPanel.cs" />
+    <Compile Include="UI\Controls\BuilderButton.cs" />
+    <Compile Include="UI\Controls\Button.cs" />
     <Compile Include="UI\PlayerInfoPanel.cs" />
     <Compile Include="UI\SelectionPanel.cs" />
     <Compile Include="UI\UserInterface.cs" />
@@ -237,6 +242,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\UI\UserInterface.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\UI\Button_LumberCamp.png" />
+    <Resource Include="Images\UI\Button_Mill.png" />
+    <Resource Include="Images\UI\Button_MiningCamp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

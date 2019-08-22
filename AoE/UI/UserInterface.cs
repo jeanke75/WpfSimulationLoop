@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace AoE.UI
 {
@@ -14,30 +11,32 @@ namespace AoE.UI
         private readonly Rect rect;
 
         private readonly PlayerInfoPanel playerInfoPanel;
+        internal readonly BuilderPanel builderPanel;
         private readonly SelectionPanel selectionPanel;
 
         public UserInterface(MainWindow window)
         {
             this.window = window;
 
-            imageSource = GetImageSource("UserInterface.png");
-
+            imageSource = Global.GetImageSource("UI/UserInterface.png");
 
             rect = new Rect(0, 0, window.GetWidth(), window.GetHeight());
             playerInfoPanel = new PlayerInfoPanel(window);
+            builderPanel = new BuilderPanel(window);
             selectionPanel = new SelectionPanel(window);
+        }
+
+        public void Update()
+        {
+            builderPanel.Update();
         }
 
         public void Draw(DrawingContext dc)
         {
             dc.DrawImage(imageSource, rect);
             playerInfoPanel.Draw(dc, window.player, window.units);
+            builderPanel.Draw(dc);
             selectionPanel.Draw(dc, window.selectedGameObject);
-        }
-
-        private ImageSource GetImageSource(string imageId)
-        {
-            return BitmapDecoder.Create(new Uri("pack://application:,,,/Images/UI/" + imageId), BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames.First();
         }
     }
 }

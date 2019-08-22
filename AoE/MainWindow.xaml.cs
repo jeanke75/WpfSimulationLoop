@@ -84,16 +84,21 @@ namespace AoE
         {
             InputHelper.Update();
 
+            userInterface.Update();
+
             if (InputHelper.Mouse.GetState(MouseButton.Left) == ButtonState.Pressed)
             {
-                selectedGameObject = null;
-                var mousePos = InputHelper.Mouse.GetPosition();
-                foreach (BaseGameObject gameObject in GetAllGameObjects())
+                if (userInterface.builderPanel.SelectedConstructable == null)
                 {
-                    if (gameObject is ISelectable selectableUnit && gameObject.MouseOver(mousePos))
+                    selectedGameObject = null;
+                    var mousePos = InputHelper.Mouse.GetPosition();
+                    foreach (BaseGameObject gameObject in GetAllGameObjects())
                     {
-                        selectedGameObject = selectableUnit;
-                        break;
+                        if (gameObject is ISelectable selectableUnit && gameObject.MouseOver(mousePos))
+                        {
+                            selectedGameObject = selectableUnit;
+                            break;
+                        }
                     }
                 }
             }
@@ -104,6 +109,9 @@ namespace AoE
                 {
                     if (selectedGameObject is BaseUnit selectedBaseUnit)
                     {
+                        // Reset the selected constructable on the preview
+                        userInterface.builderPanel.SelectedConstructable = null;
+
                         BaseGameObject targetGameObject = null;
                         var mousePos = InputHelper.Mouse.GetPosition();
                         foreach (BaseGameObject gameObject in GetAllGameObjects())

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace AoE.GameObjects
 {
@@ -56,7 +54,7 @@ namespace AoE.GameObjects
             Radius = width < height ? width / 2f : height / 2f;
             Name = name;
 
-            imageSource = GetImageSource(imageId);
+            imageSource = Global.GetImageSource(imageId);
         }
 
         public virtual void Draw(DrawingContext dc)
@@ -67,11 +65,6 @@ namespace AoE.GameObjects
             // Draw radius
             if (MainWindow.ShowGameObjectRadius)
                 dc.DrawEllipse(null, new Pen(Brushes.White, 1), new Point(Position.X, Position.Y), Radius, Radius);
-        }
-
-        private ImageSource GetImageSource(string imageId)
-        {
-            return BitmapDecoder.Create(new Uri("pack://application:,,,/Images/" + imageId), BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames.First();
         }
 
         /*
