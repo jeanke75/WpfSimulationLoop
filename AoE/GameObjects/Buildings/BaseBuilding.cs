@@ -46,7 +46,7 @@ namespace AoE.GameObjects.Buildings
         }
         private Player owner;
 
-        public BaseBuilding(int x, int y, int tilesWide, int tilesHigh, string name, int constructionTime, string imageId, Player owner) : base(new Vector(x * MainWindow.TileSize, y * MainWindow.TileSize), tilesWide * MainWindow.TileSize, tilesHigh * MainWindow.TileSize, name, "Buildings/" + imageId)
+        public BaseBuilding(int x, int y, int tilesWide, int tilesHigh, string name, int constructionTime, int hitPoints, string imageId, Player owner) : base(new Vector(x * MainWindow.TileSize, y * MainWindow.TileSize), tilesWide * MainWindow.TileSize, tilesHigh * MainWindow.TileSize, name, "Buildings/" + imageId)
         {
             ConstructionCost = new Dictionary<ResourceType, int>();
             ConstructionTimeTotal = constructionTime >= 0 ? constructionTime : 0;
@@ -54,7 +54,7 @@ namespace AoE.GameObjects.Buildings
             MultipleBuildersCheck = false;
 
             // TODO, init zoals bij units
-            HitPointsMax = 100;
+            HitPointsMax = hitPoints >= 1 ? hitPoints : 1;
             HitPoints = HitPointsMax;
             this.owner = owner;
         }

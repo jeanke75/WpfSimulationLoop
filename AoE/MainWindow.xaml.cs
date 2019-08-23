@@ -22,7 +22,7 @@ namespace AoE
     public partial class MainWindow : DrawingWindowBase
     {
         public static readonly Random Random = new Random();
-        public static readonly double TileSize = 10f;
+        public static readonly double TileSize = 16f;
         public static readonly bool ShowLineOfSight = true;
         public static readonly bool ShowAttackRange = true;
         public static readonly bool ShowTimeUntillAttack = true;
@@ -61,9 +61,9 @@ namespace AoE
             resources.Add(new GoldOre(new Vector(180, 32)));
 
             // Add buildings to the map
-            Buildings.Add(new LumberCamp(10, 10, Players[0]));
-            Buildings.Add(new MiningCamp(12, 10, Players[0]));
-            Buildings.Add(new Mill(14, 10, Players[1]));
+            Buildings.Add(new TownCenter(12, 12, Players[0]));
+            Buildings[0].SetConstructionTime(0);
+            Buildings.Add(new Mill(25, 15, Players[1]));
 
             // Add units to the map
             for (int i = 0; i < 2; i++)

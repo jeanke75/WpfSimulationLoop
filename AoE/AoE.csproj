@@ -68,6 +68,7 @@
     <Compile Include="GameObjects\Buildings\Storage\Mill.cs" />
     <Compile Include="GameObjects\Buildings\Storage\MiningCamp.cs" />
     <Compile Include="GameObjects\Buildings\Storage\LumberCamp.cs" />
+    <Compile Include="GameObjects\Buildings\TownCenter.cs" />
     <Compile Include="GameObjects\IActionable.cs" />
     <Compile Include="GameObjects\IDestroyable.cs" />
     <Compile Include="GameObjects\ICombat.cs" />
@@ -230,13 +231,6 @@
     <Resource Include="Images\Resources\Tree.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Buildings\LumberCamp.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Buildings\Mill.png" />
-    <Resource Include="Images\Buildings\MiningCamp.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Resources\GoldOre.png" />
     <Resource Include="Images\Resources\Rocks.png" />
   </ItemGroup>
@@ -247,6 +241,16 @@
     <Resource Include="Images\UI\Button_LumberCamp.png" />
     <Resource Include="Images\UI\Button_Mill.png" />
     <Resource Include="Images\UI\Button_MiningCamp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buildings\LumberCamp.png" />
+    <Resource Include="Images\Buildings\MiningCamp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buildings\TownCenter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buildings\Mill.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
