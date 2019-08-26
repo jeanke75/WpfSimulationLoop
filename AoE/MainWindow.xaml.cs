@@ -4,7 +4,9 @@ using AoE.GameObjects.Buildings.Storage;
 using AoE.GameObjects.Resources;
 using AoE.GameObjects.Units;
 using AoE.GameObjects.Units.Archers;
+using AoE.GameObjects.Units.Cavalry;
 using AoE.GameObjects.Units.Civilian;
+using AoE.GameObjects.Units.Infantry;
 using AoE.GameObjects.Units.Siege;
 using AoE.UI;
 using DrawingBase;
@@ -22,11 +24,11 @@ namespace AoE
     public partial class MainWindow : DrawingWindowBase
     {
         public static readonly Random Random = new Random();
-        public static readonly double TileSize = 16f;
-        public static readonly bool ShowLineOfSight = true;
-        public static readonly bool ShowAttackRange = true;
-        public static readonly bool ShowTimeUntillAttack = true;
-        public static readonly bool ShowGameObjectRadius = false;
+        public static readonly double TileSize = 64f;
+        public static bool ShowLineOfSight = false;
+        public static bool ShowAttackRange = false;
+        public static bool ShowTimeUntillAttack = false;
+        public static bool ShowGameObjectRadius = false;
         internal readonly List<Player> Players = new List<Player>();
         internal readonly List<BaseUnit> Units = new List<BaseUnit>();
         internal readonly List<BaseResource> resources = new List<BaseResource>();
@@ -61,23 +63,25 @@ namespace AoE
             resources.Add(new GoldOre(new Vector(180, 32)));
 
             // Add buildings to the map
-            Buildings.Add(new TownCenter(12, 12, Players[0]));
+            Buildings.Add(new TownCenter(1, 6, Players[0]));
             Buildings[0].SetConstructionTime(0);
-            Buildings.Add(new Mill(25, 15, Players[1]));
+            Buildings.Add(new Mill(8, 1, Players[1]));
 
             // Add units to the map
             for (int i = 0; i < 2; i++)
             {
-                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * 30), Players[0]));
+                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * TileSize), Players[0]));
                 (Units[i * 3] as IGatherer).Gather(resources[0], resources, Buildings);
-                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * 30), Players[0]));
+                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * TileSize), Players[0]));
                 (Units[i * 3 + 1] as IGatherer).Gather(resources[2], resources, Buildings);
-                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * 30), Players[0]));
+                Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * TileSize), Players[0]));
                 (Units[i * 3 + 2] as IGatherer).Gather(resources[4], resources, Buildings);
             }
 
-            Units.Add(new Archer(new Vector((Random.NextDouble() + 1) * TileSize + 30, 200), Players[0]));
-            Units.Add(new Mangonel(new Vector(GetWidth() - 100, GetHeight() / 2d), Players[1]));
+            Units.Add(new Berserk(new Vector((Random.NextDouble() + 2) * TileSize + TileSize, 200), Players[0]));
+            Units.Add(new Archer(new Vector((Random.NextDouble() + 1) * TileSize + TileSize, 200), Players[0]));
+            Units.Add(new ScoutCavalry(new Vector(GetWidth() - 100, GetHeight() / 2d), Players[1]));
+            Units.Add(new BombardCannon(new Vector(GetWidth() - 100, GetHeight() / 2d), Players[1]));
         }
 
         public override void Update(float dt)
@@ -85,6 +89,11 @@ namespace AoE
             InputHelper.Update();
 
             userInterface.Update();
+
+            if (InputHelper.Keyboard.GetPressedState(System.Windows.Input.Key.F3) == ButtonState.Pressed)
+            {
+                ToggleDebugMode();
+            }
 
             if (InputHelper.Mouse.GetState(MouseButton.Left) == ButtonState.Pressed)
             {
@@ -266,6 +275,15 @@ namespace AoE
             allGameObjects.AddRange(resources);
             allGameObjects.AddRange(Buildings);
             return allGameObjects;
+        }
+
+        private void ToggleDebugMode()
+        {
+            DisplayInfo = !DisplayInfo;
+            ShowLineOfSight = !ShowLineOfSight;
+            ShowAttackRange = !ShowAttackRange;
+            ShowTimeUntillAttack = !ShowTimeUntillAttack;
+            ShowGameObjectRadius = !ShowGameObjectRadius;
         }
     }
 }

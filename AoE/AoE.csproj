@@ -80,6 +80,7 @@
     <Compile Include="GameObjects\Resources\GoldOre.cs" />
     <Compile Include="GameObjects\Resources\Rocks.cs" />
     <Compile Include="GameObjects\Resources\Tree.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\WarElephant.cs" />
     <Compile Include="GameObjects\Units\IBuilder.cs" />
     <Compile Include="GameObjects\Units\IGatherer.cs" />
     <Compile Include="GameObjects\Units\IMoveable.cs" />
@@ -87,16 +88,12 @@
     <Compile Include="Player.cs" />
     <Compile Include="GameObjects\Units\Siege\BatteringRam.cs" />
     <Compile Include="GameObjects\Units\Siege\BombardCannon.cs" />
-    <Compile Include="GameObjects\Units\Siege\SiegeTower.cs" />
     <Compile Include="GameObjects\Units\Siege\Scorpion.cs" />
     <Compile Include="GameObjects\Units\Cavalry\Tarkan.cs" />
-    <Compile Include="GameObjects\Units\Infantry\Condotierro.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Berserk.cs" />
     <Compile Include="GameObjects\Units\Archers\CavalryArcher.cs" />
-    <Compile Include="GameObjects\Units\Archers\Genitour.cs" />
     <Compile Include="GameObjects\Units\Cavalry\Camel.cs" />
-    <Compile Include="GameObjects\Units\Cavalry\BattleElephant.cs" />
     <Compile Include="GameObjects\Units\Cavalry\ScoutCavalry.cs" />
-    <Compile Include="GameObjects\Units\Archers\Slinger.cs" />
     <Compile Include="GameObjects\Units\Archers\HandCannoneer.cs" />
     <Compile Include="GameObjects\Units\Archers\Skirmisher.cs" />
     <Compile Include="GameObjects\Units\Infantry\Huskarl.cs" />
@@ -162,72 +159,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Units\Archer.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Spearman.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Militia.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Knight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Mangonel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Villager.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\EagleScout.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Condotierro.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Huskarl.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Skirmisher.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\CavalryArcher.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\HandCannoneer.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Slinger.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Genitour.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\ScoutCavalry.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Camel.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\BattleElephant.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Tarkan.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\BatteringRam.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\Scorpion.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\BombardCannon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Units\SiegeTower.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Resources\Tree.png" />
   </ItemGroup>
   <ItemGroup>
@@ -251,6 +182,63 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Buildings\Mill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Villager.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Archer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\CavalryArcher.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\HandCannoneer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Skirmisher.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Camel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Knight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\ScoutCavalry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Tarkan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Berserk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\EagleScout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Huskarl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Militia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Spearman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\BatteringRam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\BombardCannon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Mangonel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\Scorpion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Units\WarElephant.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

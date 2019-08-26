@@ -4,7 +4,7 @@ namespace AoE.GameObjects.Units.Archers
 {
     class HandCannoneer : BaseRangedUnit
     {
-        public HandCannoneer(Vector position, Player owner) : base(position, 18f, 18f, "Hand Cannoneer", 35, 0, 17, 0f, 3.49f, 0, 7, 0.65f, 5.5f, 1, 0, 0.96f, 9, "HandCannoneer.png", owner)
+        public HandCannoneer(Vector position, Player owner) : base(position, 34f, 45f, "Hand Cannoneer", 35, 0, 17, 0f, 3.49f, 0, 7, 0.65f, 5.5f, 1, 0, 0.96f, 9, "HandCannoneer.png", owner)
         {
             AttackBonuses.Add(ArmorType.Infantry, 10);
             AttackBonuses.Add(ArmorType.Ram, 2);
