@@ -46,7 +46,7 @@ namespace DrawingBase
             timer = new DispatcherTimer();
             timer.Tick += GameTick;
             SetFps(fps);
-            DisplayInfo = true;
+            DisplayInfo = false;
 
             Loaded += SimulationBase_Loaded;
         }
