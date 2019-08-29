@@ -30,6 +30,7 @@ namespace AoE
         public static bool ShowAttackRange = false;
         public static bool ShowTimeUntillAttack = false;
         public static bool ShowGameObjectRadius = false;
+        private ImageSource terrainImageSource; 
         internal readonly List<Player> Players = new List<Player>();
         internal readonly List<BaseUnit> Units = new List<BaseUnit>();
         internal readonly List<BaseResource> resources = new List<BaseResource>();
@@ -46,6 +47,9 @@ namespace AoE
 
             // UI
             userInterface = new UserInterface(this);
+
+            // Terrain
+            terrainImageSource = Global.GetImageSource("Terrain/Gras.png");
 
             // Players
             for (uint i = 0; i < 2; i++)
@@ -232,6 +236,9 @@ namespace AoE
 
         public override void Draw(DrawingContext dc)
         {
+            // Draw terrain
+            dc.DrawImage(terrainImageSource, new Rect(0, 0, GetWidth(), GetHeight()));
+
             // Draw resources
             foreach (BaseResource resource in resources)
             {
