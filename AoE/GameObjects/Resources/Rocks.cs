@@ -4,6 +4,6 @@ namespace AoE.GameObjects.Resources
 {
     class Rocks : BaseResource
     {
-        public Rocks(Vector position) : base(position, 8, 8, "Rocks", ResourceType.Stone, 125, "Rocks.png") { }
+        public Rocks(Vector position) : base(position, 64, 64, "Rocks", ResourceType.Stone, 125, "Rocks.png") { }
     }
 }

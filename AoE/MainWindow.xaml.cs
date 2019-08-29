@@ -13,6 +13,7 @@ using DrawingBase;
 using DrawingBase.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -55,12 +56,13 @@ namespace AoE
             Player = Players[0];
 
             // Add resources to the map
-            resources.Add(new Rocks(new Vector(100, 32)));
-            resources.Add(new Rocks(new Vector(116, 32)));
-            resources.Add(new Tree(new Vector(132, 32)));
-            resources.Add(new Tree(new Vector(148, 32)));
-            resources.Add(new GoldOre(new Vector(164, 32)));
-            resources.Add(new GoldOre(new Vector(180, 32)));
+            resources.Add(new Rocks(new Vector(50, 50)));
+            resources.Add(new Rocks(new Vector(100, 50)));
+            resources.Add(new Tree(new Vector(150, 50)));
+            resources.Add(new Tree(new Vector(175, 50)));
+            resources.Add(new Tree(new Vector(200, 50)));
+            resources.Add(new GoldOre(new Vector(250, 50)));
+            resources.Add(new GoldOre(new Vector(300, 50)));
 
             // Add buildings to the map
             Buildings.Add(new TownCenter(1, 6, Players[0]));
@@ -68,20 +70,26 @@ namespace AoE
             Buildings.Add(new Mill(8, 1, Players[1]));
 
             // Add units to the map
+            var rock = resources.OfType<Rocks>().FirstOrDefault();
+            var tree = resources.OfType<Tree>().FirstOrDefault();
+            var goldOre = resources.OfType<GoldOre>().FirstOrDefault();
             for (int i = 0; i < 2; i++)
             {
                 Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * TileSize), Players[0]));
-                (Units[i * 3] as IGatherer).Gather(resources[0], resources, Buildings);
+                if (rock != null)
+                    (Units[i * 3] as IGatherer).Gather(rock, resources, Buildings);
                 Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * TileSize), Players[0]));
-                (Units[i * 3 + 1] as IGatherer).Gather(resources[2], resources, Buildings);
+                if (tree != null)
+                    (Units[i * 3 + 1] as IGatherer).Gather(tree, resources, Buildings);
                 Units.Add(new Villager(new Vector((Random.NextDouble() + 1) * TileSize, 200 + i * TileSize), Players[0]));
-                (Units[i * 3 + 2] as IGatherer).Gather(resources[4], resources, Buildings);
+                if (goldOre != null)
+                    (Units[i * 3 + 2] as IGatherer).Gather(goldOre, resources, Buildings);
             }
 
-            Units.Add(new Berserk(new Vector((Random.NextDouble() + 2) * TileSize + TileSize, 200), Players[0]));
-            Units.Add(new Archer(new Vector((Random.NextDouble() + 1) * TileSize + TileSize, 200), Players[0]));
-            Units.Add(new ScoutCavalry(new Vector(GetWidth() - 100, GetHeight() / 2d), Players[1]));
-            Units.Add(new BombardCannon(new Vector(GetWidth() - 100, GetHeight() / 2d), Players[1]));
+            Units.Add(new Berserk(new Vector(Random.NextDouble() * TileSize + TileSize, 200), Players[0]));
+            Units.Add(new Archer(new Vector((Random.NextDouble() - 0.5) * TileSize + TileSize, 200), Players[0]));
+            Units.Add(new ScoutCavalry(new Vector(GetWidth() - 150, GetHeight() / 2d), Players[1]));
+            Units.Add(new BatteringRam(new Vector(GetWidth() - 50, GetHeight() / 2d), Players[1]));
         }
 
         public override void Update(float dt)
