@@ -162,11 +162,6 @@
     <Resource Include="Images\UI\UserInterface.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\UI\Button_LumberCamp.png" />
-    <Resource Include="Images\UI\Button_Mill.png" />
-    <Resource Include="Images\UI\Button_MiningCamp.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\Buildings\LumberCamp.png" />
     <Resource Include="Images\Buildings\MiningCamp.png" />
   </ItemGroup>
@@ -240,6 +235,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Terrain\Gras.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\UI\Button_Mill.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\UI\Button_MiningCamp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\UI\Button_LumberCamp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
