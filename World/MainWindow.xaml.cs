@@ -49,7 +49,7 @@ namespace World
                     {
                         Color fill;// = ChangeColorBrightness(Colors.Gray, data[x, y] * 2 - 1);
                         if (data[x, y] <= -0.25)
-                            fill = fill = ChangeColorBrightness(Colors.DarkBlue, (data[x, y] + 0.4f) / 2f);
+                            fill = ChangeColorBrightness(Colors.DarkBlue, (data[x, y] + 0.4f) / 2f);
                         else if (data[x, y] < 0)
                             fill = ChangeColorBrightness(Colors.Blue, data[x, y] * 1.5f);
                         else if (data[x, y] < 0.03)
