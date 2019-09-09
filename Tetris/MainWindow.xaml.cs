@@ -35,6 +35,8 @@ namespace Tetris
         private bool gameOver;
         private FormattedText gameOverText;
 
+        private readonly Dictionary<BaseShape, int> shapeStats = new Dictionary<BaseShape, int>();
+
         private readonly Typeface typeface = new Typeface("Georgia");
         private readonly Brush gameOverBrush = Brushes.White;
         private readonly Brush infoBackgroundBrush = Brushes.Gray;
@@ -63,6 +65,12 @@ namespace Tetris
             shapes.Add(new S(6));
             shapes.Add(new T(7));
             shapes.Add(new Z(8));
+
+            // Add statistics
+            foreach (BaseShape shape in shapes)
+            {
+                shapeStats.Add(shape, 0);
+            }
 
             // Create the field
             field = new Field(20, 10);
@@ -95,6 +103,9 @@ namespace Tetris
                     nextShape = GetRandomshape();
                     pos.X = (field.Columns - currentShape.Width()) / 2;
                     pos.Y = 0;
+
+                    // Update the shape stats
+                    shapeStats[currentShape] += 1;
 
                     if (HasCollision())
                         gameOver = true;
@@ -213,6 +224,23 @@ namespace Tetris
             var linesValue = new FormattedText(lines.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, GetWidth() / 20d, infoTextBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
             dc.DrawText(linesValue, new Point((scoreAndLinesBoxWidth - linesValue.Width) / 2d, tileSize * 3.75));
             dc.Pop();
+
+            // Statistics
+            var statsOffsetX = (scoreAndLinesBoxWidth - linesText.Width) / 2d;
+            var statsOffsetY = tileSize * 7.5;
+            var shape = 0;
+            foreach (KeyValuePair<BaseShape, int> kvp in shapeStats)
+            {
+                var statsText = new FormattedText(kvp.Value.ToString("000"), CultureInfo.CurrentCulture, FlowDirection.RightToLeft, typeface, GetWidth() / 20d, infoTextBrush, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+                dc.DrawText(statsText, new Point(statsOffsetX + infoWidth / 3d, statsOffsetY + shape * 20));
+
+                var statsShapeTilesize = infoWidth / 3d;
+                dc.PushTransform(new TranslateTransform(statsOffsetX, statsOffsetY + shape * 20));
+                kvp.Key.Draw(dc, tiles, 5, false);
+                dc.Pop();
+
+                shape++;
+            }
 
             // Draw next shape
             var nextShapeBoxSize = infoWidth / 3d;
