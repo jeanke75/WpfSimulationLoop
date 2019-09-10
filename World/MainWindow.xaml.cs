@@ -1,6 +1,6 @@
 ﻿using DrawingBase;
+using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using World.Generator;
@@ -12,7 +12,7 @@ namespace World
     /// </summary>
     public partial class MainWindow : DrawingWindowBase
     {
-        private Image terrain;
+        private ImageSource terrainSource;
 
         public override void Initialize()
         {
@@ -21,7 +21,7 @@ namespace World
 
             float[,] heightmap = WorldGenerator.GenerateIsland(size, size);
 
-            terrain = GenerateImage(heightmap);
+            terrainSource = GenerateImage(heightmap);
         }
 
         public override void Update(float dt)
@@ -31,18 +31,21 @@ namespace World
 
         public override void Draw(DrawingContext dc)
         {
-            dc.DrawImage(terrain.Source, new Rect(0, 0, GetWidth(), GetHeight()));
+            dc.DrawImage(terrainSource, new Rect(0, 0, GetWidth(), GetHeight()));
         }
 
         public override void Cleanup()
         {
         }
 
-        private Image GenerateImage(float[,] data)
+        private ImageSource GenerateImage(float[,] data)
         {
-            DrawingVisual dv = new DrawingVisual();
-            using (DrawingContext dc = dv.RenderOpen())
+            WriteableBitmap bmp = new WriteableBitmap(GetWidth(), GetHeight(), 96, 96, PixelFormats.Pbgra32, null);
+            try
             {
+                // Reserve the back buffer for updates.
+                bmp.Lock();
+
                 for (int x = 0; x < data.GetLength(0); x++)
                 {
                     for (int y = 0; y < data.GetLength(1); y++)
@@ -65,19 +68,36 @@ namespace World
                         else
                             fill = Colors.Snow;
 
-                        dc.DrawRectangle(new SolidColorBrush(fill), null, new Rect(x, y, 1, 1));
+                        unsafe
+                        {
+                            // Get a pointer to the back buffer.
+                            IntPtr pBackBuffer = bmp.BackBuffer;
+
+                            // Find the address of the pixel to draw.
+                            pBackBuffer += x * bmp.BackBufferStride;
+                            pBackBuffer += y * 4;
+
+                            // Compute the pixel's color.
+                            int color_data = fill.R << 16; // R
+                            color_data |= fill.G << 8;   // G
+                            color_data |= fill.B << 0;   // B
+
+                            // Assign the color data to the pixel.
+                            *((int*)pBackBuffer) = color_data;
+                        }
+
+                        // Specify the area of the bitmap that changed.
+                        bmp.AddDirtyRect(new Int32Rect(x, y, 1, 1));
                     }
                 }
             }
-
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(GetWidth(), GetHeight(), 96, 96, PixelFormats.Pbgra32);
-            renderTargetBitmap.Render(dv);
-            Image img = new Image
+            finally
             {
-                Source = renderTargetBitmap
-            };
+                // Release the back buffer and make it available for display.
+                bmp.Unlock();
+            }
 
-            return img;
+            return bmp;
         }
 
         private Color ChangeColorBrightness(Color color, float correctionFactor)
