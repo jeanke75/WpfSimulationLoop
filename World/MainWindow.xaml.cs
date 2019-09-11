@@ -46,6 +46,7 @@ namespace World
                 // Reserve the back buffer for updates.
                 bmp.Lock();
 
+                // Update the pixel values
                 for (int x = 0; x < data.GetLength(0); x++)
                 {
                     for (int y = 0; y < data.GetLength(1); y++)
@@ -85,11 +86,11 @@ namespace World
                             // Assign the color data to the pixel.
                             *((int*)pBackBuffer) = color_data;
                         }
-
-                        // Specify the area of the bitmap that changed.
-                        bmp.AddDirtyRect(new Int32Rect(x, y, 1, 1));
                     }
                 }
+
+                // Specify the area of the bitmap that changed. (not used here, but tells the ui what pixels to update)
+                bmp.AddDirtyRect(new Int32Rect(0, 0, data.GetLength(0), data.GetLength(1)));
             }
             finally
             {
