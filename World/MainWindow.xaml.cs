@@ -13,8 +13,8 @@ namespace World
     /// </summary>
     public partial class MainWindow : DrawingWindowBase
     {
-        private bool showFront = false;
-        private ImageSource terrainSource;
+        private bool maximizeMinimap = false;
+        private ImageSource mapSource;
         private ImageSource frontViewSource;
 
         public override void Initialize()
@@ -24,7 +24,7 @@ namespace World
 
             float[,] heightmap = WorldGenerator.GenerateIsland(size, size);
 
-            terrainSource = GenerateImage(heightmap);
+            mapSource = GenerateImage(heightmap);
             frontViewSource = GenerateFrontView(heightmap);
         }
 
@@ -34,16 +34,21 @@ namespace World
 
             if (InputHelper.Keyboard.GetPressedState(System.Windows.Input.Key.F3) == ButtonState.Pressed)
             {
-                showFront = !showFront;
+                maximizeMinimap = !maximizeMinimap;
             }
         }
 
         public override void Draw(DrawingContext dc)
         {
-            if (showFront)
+            if (!maximizeMinimap)
+            {
                 dc.DrawImage(frontViewSource, new Rect(0, 0, GetWidth(), GetHeight()));
+                Rect r = new Rect(GetWidth() * 0.85f, 0, GetWidth() * 0.15f, GetHeight() * 0.15f);
+                dc.DrawRectangle(Brushes.Black, null, r);
+                dc.DrawImage(mapSource, r);
+            }
             else
-                dc.DrawImage(terrainSource, new Rect(0, 0, GetWidth(), GetHeight()));
+                dc.DrawImage(mapSource, new Rect(0, 0, GetWidth(), GetHeight()));
         }
 
         public override void Cleanup()
