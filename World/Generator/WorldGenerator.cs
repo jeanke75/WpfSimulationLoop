@@ -9,8 +9,10 @@ namespace World.Generator
 
         public static float[,] GenerateIsland(int width, int height, int octaves = 8, int subgradientCount = 0, double subgradientMinCenterOffset = 0, double subgradientMaxCenterOffset = 0.3)
         {
-            float[,] gradient = GenerateGradient(width, height, subgradientCount, subgradientMinCenterOffset, subgradientMaxCenterOffset);
+            float[,] gradient = GenerateBellCurveGradient(width, height);
+            //float[,] gradient = GenerateGradient(width, height, subgradientCount, subgradientMinCenterOffset, subgradientMaxCenterOffset);
             float[,] noise = Perlin.Noise(width, height, octaves);
+
             float[,] tiles = GenerateTerrain(noise, gradient);
 
             return tiles;
@@ -28,6 +30,33 @@ namespace World.Generator
             }
 
             return noise;
+        }
+
+        private static float[,] GenerateBellCurveGradient(int width, int height)
+        {
+            float[,] gradientTmp = new float[width, height];
+
+            // Calculate the midpoint
+            int centerX = width / 2 - 1;
+            int centerY = height / 2 - 1;
+
+            double peakHeight = 1f;
+            double peakPositionX = centerX;
+            double peakPositionY = centerY;
+            double bellWidthX = width / 2;
+            double bellWidthY = height / 2;
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    double bellX = peakHeight * Math.E * -(Math.Pow(x - peakPositionX, 2) / (2 * Math.Pow(bellWidthX, 2)));
+                    double bellY = peakHeight * Math.E * -(Math.Pow(y - peakPositionY, 2) / (2 * Math.Pow(bellWidthY, 2)));
+                    gradientTmp[x, y] = (float)(bellX + bellY) * -1;
+                }
+            }
+
+            return gradientTmp;
         }
 
         private static float[,] GenerateGradient(int width, int height, int subgradients, double minCenterOffsetSubgradient, double maxCenterOffsetSubgradient)
