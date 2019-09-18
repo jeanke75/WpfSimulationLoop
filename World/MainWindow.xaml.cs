@@ -117,7 +117,7 @@ namespace World
                 {
                     for (int y = data.GetLength(1) - 1; y >= 0; y--)
                     {
-                        float requiredHeightToDrawPixel = (GetHeight() - y) / (float)GetHeight();
+                        float requiredHeightToDrawPixel = (GetHeight() - y) / (float)GetHeight() * 2.5f;
                         int distance = -1;
                         for (int cy = data.GetLength(1) - 1; cy >= 0; cy--)
                         {
