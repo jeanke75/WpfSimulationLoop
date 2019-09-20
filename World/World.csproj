@@ -58,6 +58,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Gradient.cs" />
     <Compile Include="Noise\Perlin.cs" />
     <Compile Include="Noise\Simplex.cs" />
     <Compile Include="Generator\WorldGenerator.cs" />
