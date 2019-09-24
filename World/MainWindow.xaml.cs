@@ -1,7 +1,9 @@
 ﻿using DrawingBase;
 using DrawingBase.Input;
 using System;
+using System.Numerics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using World.Generator;
@@ -13,19 +15,68 @@ namespace World
     /// </summary>
     public partial class MainWindow : DrawingWindowBase
     {
+        private Vector3 cameraPos;
         private bool maximizeMinimap = false;
         private ImageSource mapSource;
         private ImageSource frontViewSource;
+        
 
         public override void Initialize()
         {
             int size = 1024;
             SetResolution(size, size);
 
+            cameraPos = new Vector3(size / 2f, 0.5f, size);
+
             float[,] heightmap = WorldGenerator.GenerateIsland(size, size);
 
             mapSource = GenerateImage(heightmap);
-            frontViewSource = GenerateFrontView(heightmap);
+            //frontViewSource = GenerateFrontView(heightmap);
+            frontViewSource = GenerateFrontViewMesh(heightmap);
+        }
+
+        private ImageSource GenerateFrontViewMesh(float[,] heightmap)
+        {
+            DrawingVisual dv = new DrawingVisual();
+            using (DrawingContext dc = dv.RenderOpen())
+            {
+                Vector3 camera = new Vector3(cameraPos.X * 5f, cameraPos.Y * 1000f, cameraPos.Z * 5f);
+                for (int x = 0; x < heightmap.GetLength(0) - 1; x++)
+                {
+                    for (int y = 0; y < heightmap.GetLength(1) - 1; y++)
+                    {
+                        // Get points
+                        Vector3 vTopLeft = new Vector3(x * 5f, GetHeight() - heightmap[x, y] * 1000f, y * 5f);
+                        Vector3 vTopRight = new Vector3((x + 1) * 5f, GetHeight() - heightmap[x + 1, y] * 1000f, y * 5f);
+                        Vector3 vBottomLeft = new Vector3(x * 5f, GetHeight() - heightmap[x, y + 1] * 1000f, y * 5f);
+                        Vector3 vBottomRight = new Vector3((x + 1) * 5f, GetHeight() - heightmap[x + 1, y + 1] * 1000f, y * 5f);
+
+                        bool drawLeftTriangle = IsTriangleVisible(vTopLeft, vTopRight, vBottomLeft, camera);
+                        if (drawLeftTriangle)
+                        {
+                            dc.DrawLine(new Pen(Brushes.Gray, 1), new Point(vTopLeft.X, vTopLeft.Y), new Point(vTopRight.X, vTopRight.Y));
+                            dc.DrawLine(new Pen(Brushes.Gray, 1), new Point(vTopRight.X, vTopRight.Y), new Point(vBottomLeft.X, vBottomLeft.Y));
+                            dc.DrawLine(new Pen(Brushes.Gray, 1), new Point(vBottomLeft.X, vBottomLeft.Y), new Point(vTopLeft.X, vTopLeft.Y));
+                        }
+
+                        bool drawRightTriangle = IsTriangleVisible(vTopRight, vBottomRight, vBottomLeft, camera);
+                        if (drawRightTriangle)
+                        {
+                            dc.DrawLine(new Pen(Brushes.LightGray, 1), new Point(vTopRight.X, vTopRight.Y), new Point(vBottomRight.X, vBottomRight.Y));
+                            dc.DrawLine(new Pen(Brushes.LightGray, 1), new Point(vBottomRight.X, vBottomRight.Y), new Point(vBottomLeft.X, vBottomLeft.Y));
+                            dc.DrawLine(new Pen(Brushes.LightGray, 1), new Point(vBottomLeft.X, vBottomLeft.Y), new Point(vTopRight.X, vTopRight.Y));
+                        }
+                    }
+                }
+            }
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(GetWidth() * 5, GetHeight(), 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(dv);
+            Image img = new Image
+            {
+                Source = renderTargetBitmap
+            };
+
+            return img.Source;
         }
 
         public override void Update(float dt)
@@ -42,7 +93,7 @@ namespace World
         {
             if (!maximizeMinimap)
             {
-                dc.DrawImage(frontViewSource, new Rect(0, 0, GetWidth(), GetHeight()));
+                dc.DrawImage(frontViewSource, new Rect(-1000, 0, GetWidth() * 5, GetHeight()));
                 Rect r = new Rect(GetWidth() * 0.85f, 0, GetWidth() * 0.15f, GetHeight() * 0.15f);
                 dc.DrawRectangle(Brushes.Black, null, r);
                 dc.DrawImage(mapSource, r);
@@ -207,6 +258,23 @@ namespace World
             }
 
             return Color.FromArgb(color.A, (byte)red, (byte)green, (byte)blue);
+        }
+
+        private bool IsTriangleVisible(Vector3 point1, Vector3 point2, Vector3 point3, Vector3 camera)
+        {
+            // Get plane normal
+            Vector3 vectorAB = point2 - point1;
+            Vector3 vectorAC = point3 - point1;
+            float nx = (vectorAB.Y * vectorAC.Z - vectorAB.Z * vectorAC.Y);
+            float ny = (vectorAB.Z * vectorAC.X - vectorAB.X * vectorAC.Z);
+            float nz = (vectorAB.X * vectorAC.Y - vectorAB.Y * vectorAC.X);
+
+            float d = -(nx * point1.X + ny * point1.Y + nz * point1.Z);
+
+            // Check if plane is facing towards the camera
+            float res = nx * camera.X + ny * camera.Y + nz * camera.Z + d;
+
+            return res < 0;
         }
     }
 }
