@@ -7,7 +7,7 @@ namespace World.Generator
     {
         public static float[,] GenerateIsland(int width, int height, int octaves = 8, int subgradientCount = 0, double subgradientMinCenterOffset = 0, double subgradientMaxCenterOffset = 0.3)
         {
-            float[,] gradient = Gradient.BellCurve(width, height);
+            float[,] gradient = Gradient.BellCurve(width, height, Math.Min(width, height) / 4f);
             //float[,] gradient = Gradient.Linear(width, height, subgradientCount, subgradientMinCenterOffset, subgradientMaxCenterOffset);
             float[,] noise = Perlin.Noise(width, height, octaves);
 
@@ -28,6 +28,27 @@ namespace World.Generator
             }
 
             return noise;
+        }
+
+        public static float[,] GeneratePyramid(int width, int height)
+        {
+            float[,] result = new float[width, height];
+            for (int x = 0; x < width / 2; x++)
+            {
+                for (int y = 0; y < height / 2; y++)
+                {
+                    result[x, y] = Math.Min(x, y);
+                    result[width - 1 - x, y] = Math.Min(x, y);
+                    result[x, height - 1 - y] = Math.Min(x, y);
+                    result[width - 1 - x, height - 1 - y] = Math.Min(x, y);
+                }
+            }
+            return result;
+        }
+
+        public static float[,] GenerateBell(int width, int height)
+        {
+            return Gradient.BellCurve(width, height, 256);
         }
 
         /*private static float[,] GenerateNoise(int width, int height)
@@ -54,7 +75,7 @@ namespace World.Generator
             {
                 for (int y = 0; y < terrainTmp.GetLength(1); y++)
                 {
-                    terrainTmp[x, y] = noise[x, y] - gradient[x, y];
+                    terrainTmp[x, y] = noise[x, y] * gradient[x, y];
                 }
             }
 

@@ -74,31 +74,28 @@ namespace World
             return gradientTmp;
         }
 
-        public static float[,] BellCurve(int width, int height)
+        public static float[,] BellCurve(int width, int height, float peakHeight)
         {
-            float[,] gradientTmp = new float[width, height];
-
-            // Calculate the midpoint
-            int centerX = width / 2 - 1;
-            int centerY = height / 2 - 1;
-
-            double peakHeight = 1f;
-            double peakPositionX = centerX;
-            double peakPositionY = centerY;
-            double bellWidthX = width / 2;
-            double bellWidthY = height / 2;
+            float[,] result = new float[width, height];
+            double midPointX = width / 2d;
+            double midPointY = height / 2d;
+            double midPoint = Math.Sqrt(midPointX * midPointX + midPointY * midPointY);
+            double standardDeviation = midPoint / 4f;
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    double bellX = peakHeight * Math.E * -(Math.Pow(x - peakPositionX, 2) / (2 * Math.Pow(bellWidthX, 2)));
-                    double bellY = peakHeight * Math.E * -(Math.Pow(y - peakPositionY, 2) / (2 * Math.Pow(bellWidthY, 2)));
-                    gradientTmp[x, y] = (float)(bellX + bellY) * -1;
+                    if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
+                    {
+                        result[x, y] = 0;
+                        continue;
+                    }
+                    double distToCenterOfCurve = Math.Sqrt(Math.Pow(x - midPointX, 2) + Math.Pow(y - midPointY, 2));                    
+                    result[x, y] = peakHeight * (float)Math.Pow(Math.E, -Math.Pow(distToCenterOfCurve, 2) / (2 * Math.Pow(standardDeviation, 2))) - 10f;
                 }
             }
-
-            return gradientTmp;
+            return result;
         }
 
         private static double Clamp(double value, double min, double max)

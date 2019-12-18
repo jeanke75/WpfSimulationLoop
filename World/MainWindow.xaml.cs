@@ -1,6 +1,7 @@
 ﻿using DrawingBase;
 using DrawingBase.Input;
 using System;
+using System.IO;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,8 +32,8 @@ namespace World
             float[,] heightmap = WorldGenerator.GenerateIsland(size, size);
 
             mapSource = GenerateImage(heightmap);
-            //frontViewSource = GenerateFrontView(heightmap);
             frontViewSource = GenerateFrontViewMesh(heightmap);
+            ExportToObjectFile(heightmap);
         }
 
         private ImageSource GenerateFrontViewMesh(float[,] heightmap)
@@ -40,16 +41,16 @@ namespace World
             DrawingVisual dv = new DrawingVisual();
             using (DrawingContext dc = dv.RenderOpen())
             {
-                Vector3 camera = new Vector3(cameraPos.X * 5f, cameraPos.Y * 1000f, cameraPos.Z * 5f);
+                Vector3 camera = new Vector3(cameraPos.X, cameraPos.Y, cameraPos.Z);
                 for (int x = 0; x < heightmap.GetLength(0) - 1; x++)
                 {
                     for (int y = 0; y < heightmap.GetLength(1) - 1; y++)
                     {
                         // Get points
-                        Vector3 vTopLeft = new Vector3(x * 5f, GetHeight() - heightmap[x, y] * 1000f, y * 5f);
-                        Vector3 vTopRight = new Vector3((x + 1) * 5f, GetHeight() - heightmap[x + 1, y] * 1000f, y * 5f);
-                        Vector3 vBottomLeft = new Vector3(x * 5f, GetHeight() - heightmap[x, y + 1] * 1000f, y * 5f);
-                        Vector3 vBottomRight = new Vector3((x + 1) * 5f, GetHeight() - heightmap[x + 1, y + 1] * 1000f, y * 5f);
+                        Vector3 vTopLeft = new Vector3(x, GetHeight() - heightmap[x, y], y);
+                        Vector3 vTopRight = new Vector3((x + 1), GetHeight() - heightmap[x + 1, y], y);
+                        Vector3 vBottomLeft = new Vector3(x, GetHeight() - heightmap[x, y + 1], y);
+                        Vector3 vBottomRight = new Vector3((x + 1), GetHeight() - heightmap[x + 1, y + 1], y);
 
                         bool drawLeftTriangle = IsTriangleVisible(vTopLeft, vTopRight, vBottomLeft, camera);
                         if (drawLeftTriangle)
@@ -69,7 +70,7 @@ namespace World
                     }
                 }
             }
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(GetWidth() * 5, GetHeight(), 96, 96, PixelFormats.Pbgra32);
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(GetWidth(), GetHeight(), 96, 96, PixelFormats.Pbgra32);
             renderTargetBitmap.Render(dv);
             Image img = new Image
             {
@@ -93,7 +94,7 @@ namespace World
         {
             if (!maximizeMinimap)
             {
-                dc.DrawImage(frontViewSource, new Rect(-1000, 0, GetWidth() * 5, GetHeight()));
+                dc.DrawImage(frontViewSource, new Rect(0, 0, GetWidth(), GetHeight()));
                 Rect r = new Rect(GetWidth() * 0.85f, 0, GetWidth() * 0.15f, GetHeight() * 0.15f);
                 dc.DrawRectangle(Brushes.Black, null, r);
                 dc.DrawImage(mapSource, r);
@@ -120,7 +121,23 @@ namespace World
                     for (int y = 0; y < data.GetLength(1); y++)
                     {
                         Color fill;// = ChangeColorBrightness(Colors.Gray, data[x, y] * 2 - 1);
-                        if (data[x, y] <= -0.25)
+                        if (data[x, y] <= -5)
+                            fill = ChangeColorBrightness(Colors.DarkBlue, (data[x, y] / 20 + 0.4f) / 2f);
+                        else if (data[x, y] < 0)
+                            fill = ChangeColorBrightness(Colors.Blue, data[x, y] / 20 * 1.5f);
+                        else if (data[x, y] < 7.38)
+                            fill = Colors.SandyBrown;
+                        else if (data[x, y] < 24.6)
+                            fill = Colors.SaddleBrown;
+                        else if (data[x, y] < 49.2)
+                            fill = Colors.ForestGreen;
+                        else if (data[x, y] < 73.8)
+                            fill = Colors.Green;
+                        else if (data[x, y] < 110.7)
+                            fill = ChangeColorBrightness(Colors.Gray, 0.7f - data[x, y] / 256);
+                        else
+                            fill = Colors.Snow;
+                        /*if (data[x, y] <= -0.25)
                             fill = ChangeColorBrightness(Colors.DarkBlue, (data[x, y] + 0.4f) / 2f);
                         else if (data[x, y] < 0)
                             fill = ChangeColorBrightness(Colors.Blue, data[x, y] * 1.5f);
@@ -135,7 +152,7 @@ namespace World
                         else if (data[x, y] < 0.45)
                             fill = ChangeColorBrightness(Colors.Gray, 0.7f - data[x, y]);
                         else
-                            fill = Colors.Snow;
+                            fill = Colors.Snow;*/
 
                         SetPixelColor(bmp, x, y, fill);
                     }
@@ -262,19 +279,50 @@ namespace World
 
         private bool IsTriangleVisible(Vector3 point1, Vector3 point2, Vector3 point3, Vector3 camera)
         {
-            // Get plane normal
-            Vector3 vectorAB = point2 - point1;
-            Vector3 vectorAC = point3 - point1;
-            float nx = (vectorAB.Y * vectorAC.Z - vectorAB.Z * vectorAC.Y);
-            float ny = (vectorAB.Z * vectorAC.X - vectorAB.X * vectorAC.Z);
-            float nz = (vectorAB.X * vectorAC.Y - vectorAB.Y * vectorAC.X);
-
-            float d = -(nx * point1.X + ny * point1.Y + nz * point1.Z);
+            GetPlaneNormal(point1, point2, point3, out float nx, out float ny, out float nz, out float d);
 
             // Check if plane is facing towards the camera
             float res = nx * camera.X + ny * camera.Y + nz * camera.Z + d;
 
             return res < 0;
+        }
+
+        private void GetPlaneNormal(Vector3 point1, Vector3 point2, Vector3 point3, out float nx, out float ny, out float nz, out float d)
+        {
+            // Get plane normal
+            Vector3 vectorAB = point2 - point1;
+            Vector3 vectorAC = point3 - point1;
+            nx = (vectorAB.Y * vectorAC.Z - vectorAB.Z * vectorAC.Y);
+            ny = (vectorAB.Z * vectorAC.X - vectorAB.X * vectorAC.Z);
+            nz = (vectorAB.X * vectorAC.Y - vectorAB.Y * vectorAC.X);
+
+            d = -(nx * point1.X + ny * point1.Y + nz * point1.Z);
+        }
+
+        private void ExportToObjectFile(float[,] heightmap)
+        {
+            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "Test.obj")))
+            {
+                // Write vectors
+                for (int x = 0; x < heightmap.GetLength(0); x++)
+                {
+                    for (int y = 0; y < heightmap.GetLength(1); y++)
+                    {
+                        outputFile.WriteLine($"v {x} {heightmap[x, y]} {y}");
+                    }
+                }
+
+                // Write triangles
+                for (int x = 0; x < heightmap.GetLength(0) - 1; x++)
+                {
+                    for (int y = 0; y < heightmap.GetLength(1) - 1; y++)
+                    {
+                        outputFile.WriteLine($"f {x * heightmap.GetLength(1) + (y + 1) + 1} {x * heightmap.GetLength(1) + y + 1} {(x + 1) * heightmap.GetLength(1) + y + 1}");
+                        outputFile.WriteLine($"f {x * heightmap.GetLength(1) + (y + 1) + 1} {(x + 1) * heightmap.GetLength(1) + y + 1} {(x + 1) * heightmap.GetLength(1) + (y + 1) + 1}");
+                    }
+                }
+            }
         }
     }
 }
