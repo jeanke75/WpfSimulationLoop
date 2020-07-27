@@ -1,4 +1,5 @@
 ﻿using DrawingBase;
+using Shared.Noise;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -10,9 +11,7 @@ namespace MarchingSquares
     /// </summary>
     public partial class MainWindow : DrawingWindowBase
     {
-        private readonly Random rnd = new Random();
-
-        private readonly int rez = 20; // distance between cornerPixels
+        private readonly int rez = 16; // distance between cornerPixels
         private int rows;
         private int cols;
         float[,] field;
@@ -37,7 +36,7 @@ namespace MarchingSquares
             {
                 for (int j = 0; j < rows - 1; j++)
                 {
-                    field[i, j] = (float)rnd.NextDouble();
+                    field[i, j] = Simplex.CalcPixel2D(i, j, 1);
                 }
             }
         }
@@ -48,15 +47,15 @@ namespace MarchingSquares
 
         public override void Draw(DrawingContext dc)
         {
-            for (int i = 0; i < cols; i++)
+            /*for (int i = 0; i < cols; i++)
             {
                 for (int j = 0; j < rows; j++)
                 {
-                    dc.PushOpacity(field[i, j] * 255);
-                    dc.DrawEllipse(vertexBrush, null, new Point(i * rez, j * rez), rez * 0.4, rez * 0.4);
+                    dc.PushOpacity(field[i, j]);
+                    dc.DrawEllipse(vertexBrush, null, new Point(i * rez, j * rez), rez * 0.1, rez * 0.1);
                     dc.Pop();
                 }
-            }
+            }*/
 
             for (int i = 0; i < cols - 1; i++)
             {
@@ -70,7 +69,7 @@ namespace MarchingSquares
                     Point d = new Point(x, y + rez * 0.5);
                     
 
-                    int state = GetState((int)Math.Ceiling(field[i, j]), (int)Math.Ceiling(field[i + 1, j]), (int)Math.Ceiling(field[i + 1, j + 1]), (int)Math.Ceiling(field[i, j + 1]));
+                    int state = GetState((int)Math.Round(field[i, j]), (int)Math.Round(field[i + 1, j]), (int)Math.Round(field[i + 1, j + 1]), (int)Math.Round(field[i, j + 1]));
 
                     switch (state)
                     {

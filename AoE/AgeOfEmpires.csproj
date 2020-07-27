@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C35D2BB5-B377-4129-BD78-684A5ED52D58}</ProjectGuid>
+    <ProjectGuid>{624D0F35-B031-418A-8356-99361A2150F9}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>World</RootNamespace>
-    <AssemblyName>World</AssemblyName>
+    <RootNamespace>AgeOfEmpires</RootNamespace>
+    <AssemblyName>AgeOfEmpires</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -24,7 +24,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,7 +37,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,8 +56,33 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Gradient.cs" />
-    <Compile Include="Generator\WorldGenerator.cs" />
+    <Compile Include="GameObjects\BaseGameObject.cs" />
+    <Compile Include="Team.cs" />
+    <Compile Include="GameObjects\Units\Siege\BatteringRam.cs" />
+    <Compile Include="GameObjects\Units\Siege\BombardCannon.cs" />
+    <Compile Include="GameObjects\Units\Siege\SiegeTower.cs" />
+    <Compile Include="GameObjects\Units\Siege\Scorpion.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\Tarkan.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Condotierro.cs" />
+    <Compile Include="GameObjects\Units\Archers\CavalryArcher.cs" />
+    <Compile Include="GameObjects\Units\Archers\Genitour.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\Camel.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\BattleElephant.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\ScoutCavalry.cs" />
+    <Compile Include="GameObjects\Units\Archers\Slinger.cs" />
+    <Compile Include="GameObjects\Units\Archers\HandCannoneer.cs" />
+    <Compile Include="GameObjects\Units\Archers\Skirmisher.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Huskarl.cs" />
+    <Compile Include="GameObjects\Units\Siege\Mangonel.cs" />
+    <Compile Include="GameObjects\Units\Archers\Archer.cs" />
+    <Compile Include="GameObjects\Units\BaseRangedUnit.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Militia.cs" />
+    <Compile Include="GameObjects\Units\Cavalry\Knight.cs" />
+    <Compile Include="GameObjects\Units\BaseUnit.cs" />
+    <Compile Include="GameObjects\Units\Infantry\Spearman.cs" />
+    <Compile Include="GameObjects\Units\Infantry\EagleScout.cs" />
+    <Compile Include="GameObjects\Units\Civilian\Villager.cs" />
+    <Compile Include="UI\SelectionPanel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -91,6 +114,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -104,10 +128,73 @@
       <Project>{09D0FF63-C6D7-4535-A9CC-B61789EEA2B8}</Project>
       <Name>DrawingBase</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Shared\Shared.csproj">
-      <Project>{e0cb5471-11d9-4d9c-97c2-c4dc42b2bbde}</Project>
-      <Name>Shared</Name>
-    </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Archer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Spearman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Militia.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Knight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Mangonel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Villager.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\EagleScout.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Condotierro.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Huskarl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Skirmisher.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CavalryArcher.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\HandCannoneer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Slinger.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Genitour.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\ScoutCavalry.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Camel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BattleElephant.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Tarkan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BatteringRam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Scorpion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BombardCannon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\SiegeTower.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
