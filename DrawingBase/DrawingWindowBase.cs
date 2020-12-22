@@ -65,7 +65,7 @@ namespace DrawingBase
             timer.Tick += GameTick;
             SetFps(fps);
             ClearFrameBuffer = true;
-            DisplayInfo = true;
+            DisplayInfo = false;
 
             Loaded += SimulationBase_Loaded;
         }
