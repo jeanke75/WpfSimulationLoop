@@ -65,7 +65,18 @@ namespace DrawingBase
             timer.Tick += GameTick;
             SetFps(fps);
             ClearFrameBuffer = true;
-            DisplayInfo = false;
+            DisplayInfo = true;
+
+            // display info settings
+            cultureInfo = CultureInfo.CurrentCulture;
+            typeface = new Typeface("Georgia");
+            emSize = 10;
+            fontBrush = Brushes.White;
+            dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            loopIntervalOrigin = new Point(0, 0);
+            updateAverageOrigin = new Point(0, loopIntervalOrigin.Y + emSize);
+            drawAverageOrigin = new Point(0, updateAverageOrigin.Y + emSize);
+            heapSizeOrigin = new Point(0, drawAverageOrigin.Y + emSize);
 
             Loaded += SimulationBase_Loaded;
         }
@@ -92,17 +103,6 @@ namespace DrawingBase
             timer.Start();
             renderTargetBitmap = new RenderTargetBitmap((int)CvsDraw.ActualWidth, (int)CvsDraw.ActualHeight, 96, 96, PixelFormats.Pbgra32);
             image.Source = renderTargetBitmap;
-
-            // display info settings
-            cultureInfo = CultureInfo.CurrentCulture;
-            typeface = new Typeface("Georgia");
-            emSize = 10;
-            fontBrush = Brushes.White;
-            dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-            loopIntervalOrigin = new Point(0, 0);
-            updateAverageOrigin = new Point(0, loopIntervalOrigin.Y + emSize);
-            drawAverageOrigin = new Point(0, updateAverageOrigin.Y + emSize);
-            heapSizeOrigin = new Point(0, drawAverageOrigin.Y + emSize);
         }
 
         private void GameTick(object sender, EventArgs e)
