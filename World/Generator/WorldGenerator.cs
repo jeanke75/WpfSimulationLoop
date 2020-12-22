@@ -1,5 +1,5 @@
 ﻿using System;
-using World.Noise;
+using Shared.Noise;
 
 namespace World.Generator
 {

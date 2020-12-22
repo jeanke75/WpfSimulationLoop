@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace World.Noise
+namespace Shared.Noise
 {
-    static class Perlin
+    public static class Perlin
     {
         private static readonly Random random = new Random();
 

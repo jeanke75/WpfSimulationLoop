@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarchingSquares", "MarchingSquares\MarchingSquares.csproj", "{30A598A6-B35F-4E02-AA6C-BD12BAA8BD40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{E0CB5471-11D9-4D9C-97C2-C4DC42B2BBDE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{30A598A6-B35F-4E02-AA6C-BD12BAA8BD40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30A598A6-B35F-4E02-AA6C-BD12BAA8BD40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30A598A6-B35F-4E02-AA6C-BD12BAA8BD40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0CB5471-11D9-4D9C-97C2-C4DC42B2BBDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0CB5471-11D9-4D9C-97C2-C4DC42B2BBDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0CB5471-11D9-4D9C-97C2-C4DC42B2BBDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0CB5471-11D9-4D9C-97C2-C4DC42B2BBDE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

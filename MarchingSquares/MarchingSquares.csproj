@@ -99,6 +99,10 @@
       <Project>{09D0FF63-C6D7-4535-A9CC-B61789EEA2B8}</Project>
       <Name>DrawingBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{e0cb5471-11d9-4d9c-97c2-c4dc42b2bbde}</Project>
+      <Name>Shared</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
