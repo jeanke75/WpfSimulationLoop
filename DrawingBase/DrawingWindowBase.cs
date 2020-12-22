@@ -14,6 +14,10 @@ namespace DrawingBase
     {
         private readonly Canvas CvsDraw;
         private readonly DispatcherTimer timer;
+        private readonly Stopwatch stopwatch;
+        private readonly DrawingVisual drawingVisual;
+        private RenderTargetBitmap renderTargetBitmap;
+        private readonly Image image;
         private int fps = 60;
         private DateTime prev;
 
@@ -25,6 +29,17 @@ namespace DrawingBase
         private TimeSpan avgUpdateMs = new TimeSpan();
         private TimeSpan avgDrawMs = new TimeSpan();
 
+        private CultureInfo cultureInfo;
+        private Typeface typeface;
+        private double emSize;
+        private Brush fontBrush;
+        private double dpi;
+        private Point loopIntervalOrigin;
+        private Point updateAverageOrigin;
+        private Point drawAverageOrigin;
+        private Point heapSizeOrigin;
+
+        public bool ClearFrameBuffer { get; set; }
         public bool DisplayInfo { get; set; }
 
         public DrawingWindowBase() : this(600, 800, 60) { }
@@ -40,13 +55,17 @@ namespace DrawingBase
             };
             AddChild(CvsDraw);
 
+            stopwatch = new Stopwatch();
+            drawingVisual = new DrawingVisual();
+            image = new Image();
             updateTicksHistory = new List<long>();
             drawTicksHistory = new List<long>();
 
             timer = new DispatcherTimer();
             timer.Tick += GameTick;
             SetFps(fps);
-            DisplayInfo = false;
+            ClearFrameBuffer = true;
+            DisplayInfo = true;
 
             Loaded += SimulationBase_Loaded;
         }
@@ -71,6 +90,19 @@ namespace DrawingBase
             Initialize();
             prev = DateTime.Now;
             timer.Start();
+            renderTargetBitmap = new RenderTargetBitmap((int)CvsDraw.ActualWidth, (int)CvsDraw.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            image.Source = renderTargetBitmap;
+
+            // display info settings
+            cultureInfo = CultureInfo.CurrentCulture;
+            typeface = new Typeface("Georgia");
+            emSize = 10;
+            fontBrush = Brushes.White;
+            dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            loopIntervalOrigin = new Point(0, 0);
+            updateAverageOrigin = new Point(0, loopIntervalOrigin.Y + emSize);
+            drawAverageOrigin = new Point(0, updateAverageOrigin.Y + emSize);
+            heapSizeOrigin = new Point(0, drawAverageOrigin.Y + emSize);
         }
 
         private void GameTick(object sender, EventArgs e)
@@ -81,31 +113,26 @@ namespace DrawingBase
             prev = now;
 
             // Update
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            stopwatch.Start();
             Update(dt);
-            sw.Stop();
-            long updateTicks = sw.Elapsed.Ticks;
+            stopwatch.Stop();
+            long updateTicks = stopwatch.Elapsed.Ticks;
 
             // Draw
-            sw.Restart();
+            stopwatch.Restart();
             CvsDraw.Children.Clear();
-            DrawingVisual dv = new DrawingVisual();
-            using (DrawingContext dc = dv.RenderOpen())
+            using (DrawingContext dc = drawingVisual.RenderOpen())
             {
                 Draw(dc);
                 if (DisplayInfo)
                     ShowInfo(dc);
             }
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)CvsDraw.ActualWidth, (int)CvsDraw.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            renderTargetBitmap.Render(dv);
-            Image img = new Image
-            {
-                Source = renderTargetBitmap
-            };
-            CvsDraw.Children.Add(img);
-            sw.Stop();
-            long drawTicks = sw.Elapsed.Ticks;
+            if (ClearFrameBuffer)
+                renderTargetBitmap.Clear();
+            renderTargetBitmap.Render(drawingVisual);
+            CvsDraw.Children.Add(image);
+            stopwatch.Stop();
+            long drawTicks = stopwatch.Elapsed.Ticks;
 
             // Recalculate the tick totals
             RecalculateTickTotalAndHistory(ref totalUpdateTicks, updateTicks, updateTicksHistory, fps);
@@ -163,22 +190,16 @@ namespace DrawingBase
 
         private void ShowInfo(DrawingContext dc)
         {
-            CultureInfo cultureInfo = CultureInfo.CurrentCulture;
-            FlowDirection flowDirection = FlowDirection.LeftToRight;
-            Typeface typeface = new Typeface("Georgia");
-            double emSize = 10;
-            Brush color = Brushes.White;
-            double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-            dc.DrawText(new FormattedText($"Loop interval: {1000 / fps}ms", cultureInfo, flowDirection, typeface, emSize, color, dpi), new Point(0, 0));
+            dc.DrawText(new FormattedText($"Loop interval: {1000 / fps}ms", cultureInfo, FlowDirection.LeftToRight, typeface, emSize, fontBrush, dpi), loopIntervalOrigin);
             if (avgUpdateMs.Seconds > 0)
-                dc.DrawText(new FormattedText($"Update avg: {avgUpdateMs.Seconds}s{avgUpdateMs.Milliseconds}ms", cultureInfo, flowDirection, typeface, emSize, color, dpi), new Point(0, 10));
+                dc.DrawText(new FormattedText($"Update avg: {avgUpdateMs.Seconds}s{avgUpdateMs.Milliseconds}ms", cultureInfo, FlowDirection.LeftToRight, typeface, emSize, fontBrush, dpi), updateAverageOrigin);
             else
-                dc.DrawText(new FormattedText($"Update avg: {avgUpdateMs.Milliseconds}ms", cultureInfo, flowDirection, typeface, emSize, color, dpi), new Point(0, 10));
+                dc.DrawText(new FormattedText($"Update avg: {avgUpdateMs.Milliseconds}ms", cultureInfo, FlowDirection.LeftToRight, typeface, emSize, fontBrush, dpi), updateAverageOrigin);
             if (avgDrawMs.Seconds > 0)
-                dc.DrawText(new FormattedText($"Draw avg: {avgDrawMs.Seconds}s{avgDrawMs.Milliseconds}ms", cultureInfo, flowDirection, typeface, emSize, color, dpi), new Point(0, 20));
+                dc.DrawText(new FormattedText($"Draw avg: {avgDrawMs.Seconds}s{avgDrawMs.Milliseconds}ms", cultureInfo, FlowDirection.LeftToRight, typeface, emSize, fontBrush, dpi), drawAverageOrigin);
             else
-                dc.DrawText(new FormattedText($"Draw avg: {avgDrawMs.Milliseconds}ms", cultureInfo, flowDirection, typeface, emSize, color, dpi), new Point(0, 20));
-            dc.DrawText(new FormattedText($"Heap Size: { Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString()}MB", cultureInfo, flowDirection, typeface, emSize, color, dpi), new Point(0, 30));
+                dc.DrawText(new FormattedText($"Draw avg: {avgDrawMs.Milliseconds}ms", cultureInfo, FlowDirection.LeftToRight, typeface, emSize, fontBrush, dpi), drawAverageOrigin);
+            dc.DrawText(new FormattedText($"Heap Size: { Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)}MB", cultureInfo, FlowDirection.LeftToRight, typeface, emSize, fontBrush, dpi), heapSizeOrigin);
         }
 
         private void RecalculateTickTotalAndHistory(ref long total, long ticks, List<long> list, int maxItems)
